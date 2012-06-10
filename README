@@ -1,0 +1,22 @@
+SheepShear -- A fork of SheepShaver
+
+While SheepShaver provides decent PowerPC emulation
+on Linux, BeOS, and Windows, it development has been
+extremely slow in the last ~5 years.
+
+To ensure a quality MacOS Classic emulator continues
+on to exist in a functioning state for Linux, and Haiku
+SheepShear was created as a fork of the SheepShaver codebase
+
+Targeted Platforms:
+ * Haiku
+ * Linux
+
+TODO Items:
+ * Better GUI
+ * Better Icons
+ * Patches from other SheepShaver branches applied
+ * Easier to use
+
+Done Items:
+ * Basilisk II code integrated
