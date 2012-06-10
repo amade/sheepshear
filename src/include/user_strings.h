@@ -24,7 +24,8 @@
 // Common string numbers
 enum {
 	// General messages
-	STR_ABOUT_TEXT1 = 0,
+	STR_ABOUT_TEXT0 = 0,
+	STR_ABOUT_TEXT1,
 	STR_ABOUT_TEXT2,
 	STR_READING_ROM_FILE,
 	STR_SHELL_ERROR_PREFIX,

@@ -5,7 +5,7 @@
 
 DIE=0
 
-PROG="SheepShaver"
+PROG="SheepShear"
 
 # Check how echo works in this /bin/sh
 case `echo -n` in

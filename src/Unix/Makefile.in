@@ -1,4 +1,4 @@
-# Unix makefile for SheepShaver
+# Unix makefile for SheepShear
 
 ## System specific configuration
 @SET_MAKE@
@@ -63,13 +63,13 @@ SRCS = ../main.cpp main_unix.cpp ../prefs.cpp ../prefs_items.cpp prefs_unix.cpp 
     about_window_unix.cpp ../user_strings.cpp user_strings_unix.cpp \
     vm_alloc.cpp sigsegv.cpp rpc_unix.cpp \
     sshpty.c strlcpy.c $(SYSSRCS) $(CPUSRCS) $(MONSRCS) $(SLIRP_SRCS)
-APP = SheepShaver
+APP = SheepShear
 APP_EXE = $(APP)$(EXEEXT)
 APP_APP = $(APP).app
 
 PROGS = $(APP_EXE)
 ifeq ($(STANDALONE_GUI),yes)
-GUI_APP = SheepShaverGUI
+GUI_APP = SheepShearGUI
 GUI_APP_EXE = $(GUI_APP)$(EXEEXT)
 GUI_APP_APP = $(GUI_APP).app
 PROGS += $(GUI_APP_EXE)

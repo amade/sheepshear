@@ -371,15 +371,11 @@ static void mn_about(...)
 
 	char str[512];
 	sprintf(str,
-		"SheepShaver\nVersion %d.%d\n\n"
-		"Copyright (C) 1997-2008 Christian Bauer and Marc Hellwig\n"
-		"E-mail: cb@cebix.net\n"
-		"http://sheepshaver.cebix.net/\n\n"
-		"SheepShaver comes with ABSOLUTELY NO\n"
-		"WARRANTY. This is free software, and\n"
-		"you are welcome to redistribute it\n"
-		"under the terms of the GNU General\n"
-		"Public License.\n",
+		"SheepShear\nVersion %d.%d\n"
+		"Copyright (C) 2012 Alexander von Gluck\n\n"
+		"SheepShear was forked from SheepShaver\n"
+		"Copyright (C) 1997-2008 Christian Bauer and Marc Hellwig\n\n"
+		"Distributed under the terms of the GPL license\n",
 		VERSION_MAJOR, VERSION_MINOR
 	);
 

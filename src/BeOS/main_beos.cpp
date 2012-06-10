@@ -261,7 +261,8 @@ static asm void *get_toc(void)
 void SheepShaver::ReadyToRun(void)
 {
 	// Print some info
-	printf(GetString(STR_ABOUT_TEXT1), VERSION_MAJOR, VERSION_MINOR);
+	printf(GetString(STR_ABOUT_TEXT0), VERSION_MAJOR, VERSION_MINOR);
+	printf(GetString(STR_ABOUT_TEXT1));
 	printf(" %s\n", GetString(STR_ABOUT_TEXT2));
 
 #if !EMULATED_PPC
