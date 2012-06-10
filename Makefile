@@ -89,13 +89,13 @@ links:
 	       Windows/ether_windows.h Windows/ether_windows.cpp \
 	       Windows/serial_windows.cpp Windows/prefs_editor_gtk.cpp \
 	       uae_cpu/compiler/codegen_x86.h'; \
-	PREFIX="../"; case $(B2_TOPDIR) in /*) PREFIX="";; esac; \
+	PREFIX=""; case $(B2_TOPDIR) in /*) PREFIX="";; esac; \
 	for i in $$list; do \
 	  if test "$$i" != "\\"; then \
 	    echo $$i; o=$$i; \
 	    case $$i in *codegen_x86.h) o=kpx_cpu/src/cpu/jit/x86/codegen_x86.h;; esac; \
 	    SUB=`echo $$o | sed 's;[^/]*/;../;g' | sed 's;[^/]*$$;;'` ;\
-	    ln -sf "$$PREFIX$$SUB$(B2_TOPDIR)/src/$$i" src/$$o; \
+	    cp -R "$$PREFIX$$SUB$(B2_TOPDIR)/src/$$i" src/$$o; \
 	  fi; \
 	done; \
-	ln -sf ../../../../../SheepShaver/src/Unix/config.h $(B2_TOPDIR)/src/Unix/Linux/NetDriver/config.h
+	#ln -sf ../../../../../SheepShaver/src/Unix/config.h $(B2_TOPDIR)/src/Unix/Linux/NetDriver/config.h
