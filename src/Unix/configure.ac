@@ -630,22 +630,6 @@ darwin*)
     OSX_CORE_AUDIO="-DOSX_CORE_AUDIO"
   fi
   ;;
-irix*)
-  AUDIOSRC=Irix/audio_irix.cpp
-  LIBS="$LIBS -laudio"
-  WANT_ESD=no
-
-  dnl Check if our compiler supports -IPA (MIPSPro)
-  HAVE_IPA=no
-  ocflags="$CFLAGS"
-  CFLAGS=`echo " $CFLAGS -IPA" | sed -e "s/ -g //g"`
-  AC_MSG_CHECKING(if "-IPA" works)
-  dnl Do a test compile of an empty function
-  AC_TRY_COMPILE([#if defined __GNUC__
-                  # error GCC does not support IPA yet
-                  #endif],, [AC_MSG_RESULT(yes); HAVE_IPA=yes], AC_MSG_RESULT(no))
-  CFLAGS="$ocflags"
-  ;;
 esac
 
 dnl BINCUE
