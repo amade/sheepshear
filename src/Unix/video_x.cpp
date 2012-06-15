@@ -418,8 +418,8 @@ static void set_window_name(Window w, int name)
 	XClassHint *hints;
 	hints = XAllocClassHint();
 	if (hints) {
-		hints->res_name = "SheepShaver";
-		hints->res_class = "SheepShaver";
+		hints->res_name = (char *)"SheepShaver";
+		hints->res_class = (char *)"SheepShaver";
 		XSetClassHint(x_display, w, hints);
 		XFree(hints);
 	}

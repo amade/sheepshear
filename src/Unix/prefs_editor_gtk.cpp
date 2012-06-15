@@ -405,13 +405,13 @@ static void mn_zap_pram(...)
 
 // Menu item descriptions
 static GtkItemFactoryEntry menu_items[] = {
-	{(gchar *)GetString(STR_PREFS_MENU_FILE_GTK),		NULL,			NULL,							0, "<Branch>"},
-	{(gchar *)GetString(STR_PREFS_ITEM_START_GTK),		"<control>S",	GTK_SIGNAL_FUNC(cb_start),		0, NULL},
+	{(gchar *)GetString(STR_PREFS_MENU_FILE_GTK),		NULL,			NULL,				0, (gchar *)"<Branch>"},
+	{(gchar *)GetString(STR_PREFS_ITEM_START_GTK),		(gchar *)"<control>S",	GTK_SIGNAL_FUNC(cb_start),	0, NULL},
 	{(gchar *)GetString(STR_PREFS_ITEM_ZAP_PRAM_GTK),	NULL,			GTK_SIGNAL_FUNC(mn_zap_pram),	0, NULL},
-	{(gchar *)GetString(STR_PREFS_ITEM_SEPL_GTK),		NULL,			NULL,							0, "<Separator>"},
-	{(gchar *)GetString(STR_PREFS_ITEM_QUIT_GTK),		"<control>Q",	GTK_SIGNAL_FUNC(cb_quit),		0, NULL},
-	{(gchar *)GetString(STR_HELP_MENU_GTK),				NULL,			NULL,							0, "<LastBranch>"},
-	{(gchar *)GetString(STR_HELP_ITEM_ABOUT_GTK),		NULL,			GTK_SIGNAL_FUNC(mn_about),		0, NULL}
+	{(gchar *)GetString(STR_PREFS_ITEM_SEPL_GTK),		NULL,			NULL,				0, (gchar *)"<Separator>"},
+	{(gchar *)GetString(STR_PREFS_ITEM_QUIT_GTK),		(gchar *)"<control>Q",	GTK_SIGNAL_FUNC(cb_quit),	0, NULL},
+	{(gchar *)GetString(STR_HELP_MENU_GTK),			NULL,			NULL,				0, (gchar *)"<LastBranch>"},
+	{(gchar *)GetString(STR_HELP_ITEM_ABOUT_GTK),		NULL,			GTK_SIGNAL_FUNC(mn_about),	0, NULL}
 };
 
 bool PrefsEditor(void)
