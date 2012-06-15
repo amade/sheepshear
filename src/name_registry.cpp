@@ -55,15 +55,15 @@ static inline int16 RegistryPropertyCreateStr(uintptr arg1, const char *arg2, co
 
 // Video driver stub
 static const uint8 video_driver[] = {
-#include "VideoDriverStub.i"
+#include "binaries/VideoDriverStub.i"
 };
 
 // Ethernet driver stub
 static const uint8 ethernet_driver[] = {
 #ifdef USE_ETHER_FULL_DRIVER
-#include "EthernetDriverFull.i"
+#include "binaries/EthernetDriverFull.i"
 #else
-#include "EthernetDriverStub.i"
+#include "binaries/EthernetDriverStub.i"
 #endif
 };
 
