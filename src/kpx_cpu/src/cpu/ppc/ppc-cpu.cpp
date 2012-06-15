@@ -607,11 +607,12 @@ void powerpc_cpu::execute(uint32 entry)
 		}
 #endif
 #if PPC_DECODE_CACHE
-		block_info *bi = my_block_cache.find(pc());
-		if (bi != NULL)
-			goto pdi_execute;
 		for (;;) {
-		  pdi_compile:
+			block_info *bi = my_block_cache.find(pc());
+			if (bi != NULL)
+				goto pdi_execute;
+
+			pdi_compile:
 #if PPC_PROFILE_COMPILE_TIME
 			compile_count++;
 			clock_t start_time;
@@ -621,7 +622,7 @@ void powerpc_cpu::execute(uint32 entry)
 			bi->init(pc());
 
 			// Predecode a new block
-		  pdi_decode:
+			pdi_decode:
 			block_info::decode_info *di;
 			const instr_info_t *ii;
 			uint32 dpc;
@@ -675,7 +676,7 @@ void powerpc_cpu::execute(uint32 entry)
 #endif
 
 			// Execute all cached blocks
-		  pdi_execute:
+			pdi_execute:
 			for (;;) {
 				const int r = bi->size % 4;
 				di = bi->di + r;
@@ -711,7 +712,7 @@ void powerpc_cpu::execute(uint32 entry)
 		goto do_interpret;
 	}
 #endif
-  do_interpret:
+	do_interpret:
 	for (;;) {
 		uint32 opcode = vm_read_memory_4(pc());
 		const instr_info_t *ii = decode(opcode);
@@ -732,7 +733,7 @@ void powerpc_cpu::execute(uint32 entry)
 		if (!spcflags().empty() && !check_spcflags())
 			goto return_site;
 	}
-  return_site:
+	return_site:
 	// Tell upper level we invalidated cache?
 	if (invalidated_cache)
 		spcflags().set(SPCFLAG_JIT_EXEC_RETURN);
