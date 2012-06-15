@@ -31,16 +31,19 @@ user_string_def platform_strings[] = {
 	{STR_EXTFS_VOLUME_NAME, "BeOS"},
 
 	// Purely platform-specific strings
-	{STR_NO_SHEEP_DRIVER_ERR, "Cannot open /dev/sheep: %s (%08x). SheepShaver is not properly installed."},
+	{STR_NO_SHEEP_DRIVER_ERR, "Cannot open /dev/sheep: %s (%08x). SheepShear is not properly installed."},
 	{STR_NO_RAM_AREA_ERR, "Not enough memory to create RAM area: %s (%08x)."},
 	{STR_NO_ROM_AREA_ERR, "Not enough memory to create ROM area."},
-	{STR_NO_SHEEP_MEM_AREA_ERR, "Not enough memory to create SheepShaver area."},
+	{STR_NO_SHEEP_MEM_AREA_ERR, "Not enough memory to create SheepShear area."},
 	{STR_SHEEP_UP_ERR, "Cannot allocate Low Memory Globals: %s (%08x)."},
-	{STR_NO_NET_ADDON_WARN, "The SheepShaver net server add-on cannot be found. Ethernet will not be available."},
-	{STR_NET_CONFIG_MODIFY_WARN, "To enable Ethernet networking for SheepShaver, your network configuration has to be modified and the network restarted. Do you want this to be done now (selecting \"Cancel\" will disable Ethernet under SheepShaver)?."},
-	{STR_NET_ADDON_INIT_FAILED, "SheepShaver net server add-on found\nbut there seems to be no network hardware.\nPlease check your network preferences."},
+	{STR_NO_NET_ADDON_WARN, "The SheepShear net server add-on cannot be found. Ethernet will not be available."},
+	{STR_NET_CONFIG_MODIFY_WARN, "To enable Ethernet networking for SheepShear,"
+		" your network configuration has to be modified and the network"
+		" restarted. Do you want this to be done now (selecting \"Cancel\" will"
+		" disable Ethernet under SheepShear)?."},
+	{STR_NET_ADDON_INIT_FAILED, "SheepShear net server add-on found\nbut there seems to be no network hardware.\nPlease check your network preferences."},
 	{STR_NET_ADDON_CLONE_FAILED, "Cloning of the network transfer area failed."},
-	{STR_NO_SHEEP_MEM_AREA_ERR, "Cannot create SheepShaver Globals area: %s (%08x)."},
+	{STR_NO_SHEEP_MEM_AREA_ERR, "Cannot create SheepShear Globals area: %s (%08x)."},
 	{STR_NO_DR_CACHE_AREA_ERR, "Cannot create DR Cache area: %s (%08x)."},
 	{STR_NO_DR_EMULATOR_AREA_ERR, "Cannot create DR Emulator area: %s (%08x)."},
 

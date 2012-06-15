@@ -38,7 +38,7 @@ prefs_desc platform_prefs_items[] = {
 
 
 // Preferences file name and path
-const char PREFS_FILE_NAME[] = "SheepShaver_prefs";
+const char PREFS_FILE_NAME[] = "SheepShear_prefs";
 static BPath prefs_path;
 
 // Modification date of prefs file

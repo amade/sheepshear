@@ -261,10 +261,10 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 				ssize_t length;
 
 				// Check if we already copied this data
-				if (clipper->HasData("application/x-SheepShaver-cookie", B_MIME_TYPE))
+				if (clipper->HasData("application/x-SheepShear-cookie", B_MIME_TYPE))
 					return;
 				bigtime_t cookie = system_time();
-				clipper->AddData("application/x-SheepShaver-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t)); 
+				clipper->AddData("application/x-SheepShear-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t)); 
 
 				// No, is there text in it?
 				if (clipper->FindData("text/plain", B_MIME_TYPE, &clip, &length) == B_OK) {
@@ -313,10 +313,10 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 				ssize_t length;
 
 				// Check if we already copied this data
-				if (clipper->HasData("application/x-SheepShaver-cookie", B_MIME_TYPE))
+				if (clipper->HasData("application/x-SheepShear-cookie", B_MIME_TYPE))
 					return;
 				bigtime_t cookie = system_time();
-				clipper->AddData("application/x-SheepShaver-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t)); 
+				clipper->AddData("application/x-SheepShear-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t)); 
 
 				static uint16 proc2[] = {
 					0x598f,					// subq.l	#4,sp

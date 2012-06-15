@@ -35,7 +35,7 @@
 
 // Global variables
 static sem_id video_lock = -1;		// Protection during mode changes
-static sem_id mac_os_lock = -1;		// This is used to stop the MacOS thread when the SheepShaver workspace is switched out
+static sem_id mac_os_lock = -1;		// This is used to stop the MacOS thread when the SheepShear workspace is switched out
 
 // Prototypes
 static filter_result filter_func(BMessage *msg, BHandler **target, BMessageFilter *filter);

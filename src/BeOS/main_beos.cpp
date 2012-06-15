@@ -99,7 +99,7 @@
 
 
 // Constants
-const char APP_SIGNATURE[] = "application/x-vnd.cebix-SheepShaver";
+const char APP_SIGNATURE[] = "application/x-vnd.cebix-SheepShear";
 const char ROM_FILE_NAME[] = "ROM";
 const char ROM_FILE_NAME2[] = "Mac OS ROM";
 const char KERNEL_AREA_NAME[] = "Macintosh Kernel Data";
@@ -108,7 +108,7 @@ const char RAM_AREA_NAME[] = "Macintosh RAM";
 const char ROM_AREA_NAME[] = "Macintosh ROM";
 const char DR_CACHE_AREA_NAME[] = "Macintosh DR Cache";
 const char DR_EMULATOR_AREA_NAME[] = "Macintosh DR Emulator";
-const char SHEEP_AREA_NAME[] = "SheepShaver Virtual Stack";
+const char SHEEP_AREA_NAME[] = "SheepShear Virtual Stack";
 
 const uintptr ROM_BASE = 0x40800000;		// Base address of ROM
 
@@ -118,9 +118,9 @@ const uint32 MSG_START = 'strt';			// Emulator start message
 
 
 // Application object
-class SheepShaver : public BApplication {
+class SheepShear : public BApplication {
 public:
-	SheepShaver() : BApplication(APP_SIGNATURE)
+	SheepShear() : BApplication(APP_SIGNATURE)
 	{
 		// Find application directory and cwd to it
 		app_info the_info;
@@ -198,7 +198,7 @@ private:
 
 
 // Global variables
-SheepShaver *the_app;	// Pointer to application object
+SheepShear *the_app;	// Pointer to application object
 #if !EMULATED_PPC
 void *TOC;				// TOC pointer
 #endif
@@ -221,10 +221,10 @@ static void *sig_stack = NULL;		// Stack for signal handlers
 static void *extra_stack = NULL;	// Stack for SIGSEGV inside interrupt handler
 uint32  SheepMem::page_size;		// Size of a native page
 uintptr SheepMem::zero_page = 0;	// Address of ro page filled in with zeros
-uintptr SheepMem::base;				// Address of SheepShaver data
+uintptr SheepMem::base;				// Address of SheepShear data
 uintptr SheepMem::proc;				// Bottom address of SheepShave procedures
-uintptr SheepMem::data;				// Top of SheepShaver data (stack like storage)
-static area_id SheepMemArea;		// SheepShaver data area ID
+uintptr SheepMem::data;				// Top of SheepShear data (stack like storage)
+static area_id SheepMemArea;		// SheepShear data area ID
 
 
 // Prototypes
@@ -239,7 +239,7 @@ static void sigill_handler(vregs *r);
 int main(int argc, char **argv)
 {	
 	tzset();
-	the_app = new SheepShaver();
+	the_app = new SheepShear();
 	the_app->Run();
 	delete the_app;
 	return 0;
@@ -258,7 +258,7 @@ static asm void *get_toc(void)
 }
 #endif
 
-void SheepShaver::ReadyToRun(void)
+void SheepShear::ReadyToRun(void)
 {
 	// Print some info
 	printf(GetString(STR_ABOUT_TEXT0), VERSION_MAJOR, VERSION_MINOR);
@@ -346,7 +346,7 @@ void SheepShaver::ReadyToRun(void)
  *  Message received
  */
 
-void SheepShaver::MessageReceived(BMessage *msg)
+void SheepShear::MessageReceived(BMessage *msg)
 {
 	switch (msg->what) {
 		case MSG_START:
@@ -362,7 +362,7 @@ void SheepShaver::MessageReceived(BMessage *msg)
  *  Start emulator
  */
 
-void SheepShaver::StartEmulator(void)
+void SheepShear::StartEmulator(void)
 {
 	char str[256];
 
@@ -405,7 +405,7 @@ void SheepShaver::StartEmulator(void)
 	}
 	D(bug("Kernel Data 2 area %ld at %p\n", kernel_area2, kernel_data2));
 
-	// Create area for SheepShaver data
+	// Create area for SheepShear data
 	if (!SheepMem::Init()) {
 		sprintf(str, GetString(STR_NO_SHEEP_MEM_AREA_ERR), strerror(SheepMemArea), SheepMemArea);
 		ErrorAlert(str);
@@ -489,7 +489,7 @@ void SheepShaver::StartEmulator(void)
 
 	// Initialize extra low memory
 	D(bug("Initializing extra Low Memory...\n"));
-	WriteMacInt32(XLM_SHEEP_OBJ, (uint32)this);						// Pointer to SheepShaver object
+	WriteMacInt32(XLM_SHEEP_OBJ, (uint32)this);						// Pointer to SheepShear object
 	D(bug("Extra Low Memory initialized\n"));
 
 	// Disallow quitting with Alt-Q from now on
@@ -514,7 +514,7 @@ void SheepShaver::StartEmulator(void)
  *  Quit requested
  */
 
-bool SheepShaver::QuitRequested(void)
+bool SheepShear::QuitRequested(void)
 {
 	if (AllowQuitting)
 		return BApplication::QuitRequested();
@@ -522,7 +522,7 @@ bool SheepShaver::QuitRequested(void)
 		return false;
 }
 
-void SheepShaver::Quit(void)
+void SheepShear::Quit(void)
 {
 	status_t l;
 
@@ -549,7 +549,7 @@ void SheepShaver::Quit(void)
 	// Deinitialize everything
 	ExitAll();
 
-	// Delete SheepShaver globals
+	// Delete SheepShear globals
 	SheepMem::Exit();
 
 	// Delete DR Emulator area
@@ -598,7 +598,7 @@ void SheepShaver::Quit(void)
  *  file_read_error: Cannot read ROM file
  */
 
-void SheepShaver::init_rom(void)
+void SheepShear::init_rom(void)
 {
 	// Size of a native page
 	page_size = B_PAGE_SIZE;
@@ -623,7 +623,7 @@ void SheepShaver::init_rom(void)
  *  file_read_error: Cannot read ROM file
  */
 
-void SheepShaver::load_rom(void)
+void SheepShear::load_rom(void)
 {
 	// Get rom file path from preferences
 	const char *rom_path = PrefsFindString("rom");
@@ -667,9 +667,9 @@ void SheepShaver::load_rom(void)
  *  Emulator thread function
  */
 
-status_t SheepShaver::emul_func(void *arg)
+status_t SheepShear::emul_func(void *arg)
 {
-	SheepShaver *obj = (SheepShaver *)arg;
+	SheepShear *obj = (SheepShear *)arg;
 
 	// Install interrupt signal handler
 	sigemptyset(&obj->sigusr1_action.sa_mask);
@@ -728,13 +728,13 @@ status_t SheepShaver::emul_func(void *arg)
 #if EMULATED_PPC
 extern void emul_ppc(uint32 start);
 extern void init_emul_ppc(void);
-void SheepShaver::jump_to_rom(uint32 entry)
+void SheepShear::jump_to_rom(uint32 entry)
 {
 	init_emul_ppc();
 	emul_ppc(entry);
 }
 #else
-asm void SheepShaver::jump_to_rom(register uint32 entry)
+asm void SheepShear::jump_to_rom(register uint32 entry)
 {
 	// Create stack frame
 	mflr	r0
@@ -766,7 +766,7 @@ asm void SheepShaver::jump_to_rom(register uint32 entry)
 
 	// Move entry address to ctr, get pointer to Emulator Data
 	mtctr	r4
-	lwz		r4,SheepShaver.emulator_data(r3)
+	lwz		r4,SheepShear.emulator_data(r3)
 
 	// Skip over EMUL_RETURN routine and get its address
 	bl		@1
@@ -1200,9 +1200,9 @@ void MakeExecutable(int dummy, uint32 start, uint32 length)
  *  NVRAM watchdog thread (saves NVRAM every minute)
  */
 
-status_t SheepShaver::nvram_func(void *arg)
+status_t SheepShear::nvram_func(void *arg)
 {
-	SheepShaver *obj = (SheepShaver *)arg;
+	SheepShear *obj = (SheepShear *)arg;
 
 	while (obj->NVRAMThreadActive) {
 		snooze(60*1000000);
@@ -1219,9 +1219,9 @@ status_t SheepShaver::nvram_func(void *arg)
  *  60Hz thread (really 60.15Hz)
  */
 
-status_t SheepShaver::tick_func(void *arg)
+status_t SheepShear::tick_func(void *arg)
 {
-	SheepShaver *obj = (SheepShaver *)arg;
+	SheepShear *obj = (SheepShear *)arg;
 	int tick_counter = 0;
 	bigtime_t current = system_time();
 
@@ -1331,9 +1331,9 @@ void EnableInterrupt(void)
  *  USR1 handler
  */
 
-void SheepShaver::sigusr1_invoc(int sig, void *arg, vregs *r)
+void SheepShear::sigusr1_invoc(int sig, void *arg, vregs *r)
 {
-	((SheepShaver *)arg)->sigusr1_handler(r);
+	((SheepShear *)arg)->sigusr1_handler(r);
 }
 
 #if !EMULATED_PPC
@@ -1380,7 +1380,7 @@ static asm void ppc_interrupt(register uint32 entry)
 }
 #endif
 
-void SheepShaver::sigusr1_handler(vregs *r)
+void SheepShear::sigusr1_handler(vregs *r)
 {
 	// Do nothing if interrupts are disabled
 	if ((*(int32 *)XLM_IRQ_NEST) > 0)
@@ -1460,7 +1460,7 @@ void SheepShaver::sigusr1_handler(vregs *r)
 static uint32 segv_r[32];
 
 #if !EMULATED_PPC
-asm void SheepShaver::sigsegv_invoc(register int sig, register void *arg, register vregs *r)
+asm void SheepShear::sigsegv_invoc(register int sig, register void *arg, register vregs *r)
 {
 	mflr	r0
 	stw		r0,8(r1)
@@ -1731,7 +1731,7 @@ rti:
  */
 
 #if !EMULATED_PPC
-asm void SheepShaver::sigill_invoc(register int sig, register void *arg, register vregs *r)
+asm void SheepShear::sigill_invoc(register int sig, register void *arg, register vregs *r)
 {
 	mflr	r0
 	stw		r0,8(r1)
@@ -1946,7 +1946,7 @@ bool SheepMem::Init(void)
 	if (old_sheep_area > 0)
 		delete_area(old_sheep_area);
 
-	// Create area for SheepShaver data
+	// Create area for SheepShear data
 	proc = base = 0x60000000;
 	SheepMemArea = create_area(SHEEP_AREA_NAME, (void **)&base, B_BASE_ADDRESS, size, B_NO_LOCK, B_READ_AREA | B_WRITE_AREA);
 	if (SheepMemArea < 0)
@@ -1956,7 +1956,7 @@ bool SheepMem::Init(void)
 	static const uint8 const_zero_page[4096] = {0,};
 	zero_page = const_zero_page;
 
-	D(bug("SheepShaver area %ld at %p\n", SheepMemArea, base));
+	D(bug("SheepShear area %ld at %p\n", SheepMemArea, base));
 	data = base + size;
 	return true;
 }

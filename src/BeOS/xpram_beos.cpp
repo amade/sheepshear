@@ -27,7 +27,7 @@
 
 // XPRAM file name and path
 #if POWERPC_ROM
-const char XPRAM_FILE_NAME[] = "SheepShaver_NVRAM";
+const char XPRAM_FILE_NAME[] = "SheepShear_NVRAM";
 #else
 const char XPRAM_FILE_NAME[] = "BasiliskII_XPRAM";
 #endif
