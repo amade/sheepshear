@@ -185,6 +185,7 @@ private:
 	void load_rom(void);
 
 	int sheep_fd;			// FD of sheep driver
+	uint32 page_size;		// Size of a native page
 
 	area_id kernel_area;	// Kernel Data area ID
 	area_id kernel_area2;	// Alternate Kernel Data area ID
@@ -227,7 +228,6 @@ uint8 *ROMBaseHost;		// Base address of Mac ROM (host address space)
 
 static void *sig_stack = NULL;		// Stack for signal handlers
 static void *extra_stack = NULL;	// Stack for SIGSEGV inside interrupt handler
-uint32  SheepMem::page_size;		// Size of a native page
 uintptr SheepMem::zero_page = 0;	// Address of ro page filled in with zeros
 uintptr SheepMem::base;				// Address of SheepShear data
 uintptr SheepMem::proc;				// Bottom address of SheepShave procedures
@@ -392,7 +392,7 @@ void SheepShear::StartEmulator(void)
 
 	// Create areas for Kernel Data
 	kernel_data = (KernelData *)KERNEL_DATA_BASE;
-	kernel_area = create_area(KERNEL_AREA_NAME, &kernel_data, B_EXACT_ADDRESS, KERNEL_AREA_SIZE, B_NO_LOCK, B_READ_AREA | B_WRITE_AREA);
+	kernel_area = create_area(KERNEL_AREA_NAME, (void **)&kernel_data, B_EXACT_ADDRESS, KERNEL_AREA_SIZE, B_NO_LOCK, B_READ_AREA | B_WRITE_AREA);
 	if (kernel_area < 0) {
 		sprintf(str, GetString(STR_NO_KERNEL_DATA_ERR), strerror(kernel_area), kernel_area);
 		ErrorAlert(str);
@@ -1964,8 +1964,9 @@ bool SheepMem::Init(void)
 		return false;
 
 	// Create read-only area with all bits set to 0
-	static const uint8 const_zero_page[4096] = {0,};
-	zero_page = const_zero_page;
+	zero_page = (uintptr)calloc(4096, sizeof(uint8));
+	//static const uintptr const_zero_page[4096] = {0,};
+	//zero_page = const_zero_page;
 
 	D(bug("SheepShear area %ld at %p\n", SheepMemArea, base));
 	data = base + size;
