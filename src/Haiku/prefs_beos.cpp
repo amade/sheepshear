@@ -110,3 +110,13 @@ void AddPlatformPrefsDefaults(void)
 	PrefsAddBool("bitbang", false);
 	PrefsAddBool("idlewait", true);
 }
+
+void prefs_init(void)
+{
+	// Stub
+}
+
+void prefs_exit(void)
+{
+	// Stub
+}

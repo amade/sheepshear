@@ -738,8 +738,9 @@ extern void emul_ppc(uint32 start);
 extern void init_emul_ppc(void);
 void SheepShear::jump_to_rom(uint32 entry)
 {
-	init_emul_ppc();
-	emul_ppc(entry);
+	#warning TODO: Important, init_emul_ppc!
+	//init_emul_ppc();
+	//emul_ppc(entry);
 }
 #else
 asm void SheepShear::jump_to_rom(register uint32 entry)
@@ -1751,7 +1752,16 @@ rti:
 	r->r11 = segv_r[11];
 	r->r12 = segv_r[12];
 }
-#endif /* !EMULATED_PPC */
+#else /* !EMULATED_PPC */
+
+void
+SheepShear::sigsegv_invoc(register int sig, register void *arg, register vregs *r)
+{
+	// TODO for emulated PPC on Haiku!
+}
+
+#endif
+
 
 
 /*

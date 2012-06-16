@@ -90,31 +90,16 @@ extern void Delay_usec(uint32 usec);
 #define CallMacOS5(type, proc, arg1, arg2, arg3, arg4, arg5) (*(type)proc)(arg1, arg2, arg3, arg4, arg5)
 #define CallMacOS6(type, proc, arg1, arg2, arg3, arg4, arg5, arg6) (*(type)proc)(arg1, arg2, arg3, arg4, arg5, arg6)
 #define CallMacOS7(type, proc, arg1, arg2, arg3, arg4, arg5, arg6, arg7) (*(type)proc)(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+#else
+#warning TODO: Fix stubbed out CallMacOS functions!
+#define CallMacOS(type, proc) 0
+#define CallMacOS1(type, proc, arg1) 0
+#define CallMacOS2(type, proc, arg1, arg2) 0
+#define CallMacOS3(type, proc, arg1, arg2, arg3) 0
+#define CallMacOS4(type, proc, arg1, arg2, arg3, arg4) 0
+#define CallMacOS5(type, proc, arg1, arg2, arg3, arg4, arg5) 0
+#define CallMacOS6(type, proc, arg1, arg2, arg3, arg4, arg5, arg6) 0
+#define CallMacOS7(type, proc, arg1, arg2, arg3, arg4, arg5, arg6, arg7) 0
 #endif
-
-#define CallMacOS(type, tvect) call_macos((uintptr)tvect)
-#define CallMacOS1(type, tvect, arg1) call_macos1((uintptr)tvect, (uintptr)arg1)
-#define CallMacOS2(type, tvect, arg1, arg2) call_macos2((uintptr)tvect, (uintptr)arg1, (uintptr)arg2)
-#define CallMacOS3(type, tvect, arg1, arg2, arg3) call_macos3((uintptr)tvect, (uintptr)arg1, (uintptr)arg2, (uintptr)arg3)
-#define CallMacOS4(type, tvect, arg1, arg2, arg3, arg4) call_macos4((uintptr)tvect, (uintptr)arg1, (uintptr)arg2, (uintptr)arg3, (uintptr)arg4)
-#define CallMacOS5(type, tvect, arg1, arg2, arg3, arg4, arg5) call_macos5((uintptr)tvect, (uintptr)arg1, (uintptr)arg2, (uintptr)arg3, (uintptr)arg4, (uintptr)arg5)
-#define CallMacOS6(type, tvect, arg1, arg2, arg3, arg4, arg5, arg6) call_macos6((uintptr)tvect, (uintptr)arg1, (uintptr)arg2, (uintptr)arg3, (uintptr)arg4, (uintptr)arg5, (uintptr)arg6)
-#define CallMacOS7(type, tvect, arg1, arg2, arg3, arg4, arg5, arg6, arg7) call_macos7((uintptr)tvect, (uintptr)arg1, (uintptr)arg2, (uintptr)arg3, (uintptr)arg4, (uintptr)arg5, (uintptr)arg6, (uintptr)arg7)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern uint32 call_macos(uint32 tvect);
-extern uint32 call_macos1(uint32 tvect, uint32 arg1);
-extern uint32 call_macos2(uint32 tvect, uint32 arg1, uint32 arg2);
-extern uint32 call_macos3(uint32 tvect, uint32 arg1, uint32 arg2, uint32 arg3);
-extern uint32 call_macos4(uint32 tvect, uint32 arg1, uint32 arg2, uint32 arg3, uint32 arg4);
-extern uint32 call_macos5(uint32 tvect, uint32 arg1, uint32 arg2, uint32 arg3, uint32 arg4, uint32 arg5);
-extern uint32 call_macos6(uint32 tvect, uint32 arg1, uint32 arg2, uint32 arg3, uint32 arg4, uint32 arg5, uint32 arg6);
-extern uint32 call_macos7(uint32 tvect, uint32 arg1, uint32 arg2, uint32 arg3, uint32 arg4, uint32 arg5, uint32 arg6, uint32 arg7);
-#ifdef __cplusplus
-}
-#endif
-
 
 #endif
