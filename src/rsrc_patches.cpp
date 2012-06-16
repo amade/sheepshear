@@ -647,7 +647,7 @@ void CheckLoad(uint32 type, const char *name, uint8 *p, uint32 size)
  *  Native Resource Manager patches
  */
 
-#ifdef __BEOS__
+#ifdef __HAIKU__
 static
 #else
 extern "C"
@@ -664,7 +664,7 @@ void check_load_invoc(uint32 type, int16 id, uint32 h)
 	CheckLoad(type, id, (uint16 *)Mac2HostAddr(p), size);
 }
 
-#ifdef __BEOS__
+#ifdef __HAIKU__
 static
 #else
 extern "C"
@@ -681,7 +681,7 @@ void named_check_load_invoc(uint32 type, uint32 name, uint32 h)
 	CheckLoad(type, (char *)Mac2HostAddr(name), Mac2HostAddr(p), size);
 }
 
-#ifdef __BEOS__
+#ifdef __HAIKU__
 static asm void **get_resource(register uint32 type, register int16 id)
 {
 	// Create stack frame
@@ -938,7 +938,7 @@ void PatchNativeResourceManager(void)
 #if EMULATED_PPC
 	WriteMacInt32(tvec, NativeFunction(NATIVE_GET_RESOURCE));
 #else
-#ifdef __BEOS__
+#ifdef __HAIKU__
 	uint32 *tvec2 = (uint32 *)get_resource;
 	WriteMacInt32(tvec, tvec2[0]);
 	WriteMacInt32(tvec + 4, tvec2[1]);
@@ -955,7 +955,7 @@ void PatchNativeResourceManager(void)
 #if EMULATED_PPC
 	WriteMacInt32(tvec, NativeFunction(NATIVE_GET_1_RESOURCE));
 #else
-#ifdef __BEOS__
+#ifdef __HAIKU__
 	tvec2 = (uint32 *)get_1_resource;
 	WriteMacInt32(tvec, tvec2[0]);
 	WriteMacInt32(tvec + 4, tvec2[1]);
@@ -972,7 +972,7 @@ void PatchNativeResourceManager(void)
 #if EMULATED_PPC
 	WriteMacInt32(tvec, NativeFunction(NATIVE_GET_IND_RESOURCE));
 #else
-#ifdef __BEOS__
+#ifdef __HAIKU__
 	tvec2 = (uint32 *)get_ind_resource;
 	WriteMacInt32(tvec, tvec2[0]);
 	WriteMacInt32(tvec + 4, tvec2[1]);
@@ -989,7 +989,7 @@ void PatchNativeResourceManager(void)
 #if EMULATED_PPC
 	WriteMacInt32(tvec, NativeFunction(NATIVE_GET_1_IND_RESOURCE));
 #else
-#ifdef __BEOS__
+#ifdef __HAIKU__
 	tvec2 = (uint32 *)get_1_ind_resource;
 	WriteMacInt32(tvec, tvec2[0]);
 	WriteMacInt32(tvec + 4, tvec2[1]);
@@ -1006,7 +1006,7 @@ void PatchNativeResourceManager(void)
 #if EMULATED_PPC
 	WriteMacInt32(tvec, NativeFunction(NATIVE_R_GET_RESOURCE));
 #else
-#ifdef __BEOS__
+#ifdef __HAIKU__
 	tvec2 = (uint32 *)r_get_resource;
 	WriteMacInt32(tvec, tvec2[0]);
 	WriteMacInt32(tvec + 4, tvec2[1]);
@@ -1023,7 +1023,7 @@ void PatchNativeResourceManager(void)
 #if EMULATED_PPC
 	WriteMacInt32(tvec, NativeFunction(NATIVE_GET_NAMED_RESOURCE));
 #else
-#ifdef __BEOS__
+#ifdef __HAIKU__
 	tvec2 = (uint32 *)get_named_resource;
 	WriteMacInt32(tvec, tvec2[0]);
 	WriteMacInt32(tvec + 4, tvec2[1]);
@@ -1040,7 +1040,7 @@ void PatchNativeResourceManager(void)
 #if EMULATED_PPC
 	WriteMacInt32(tvec, NativeFunction(NATIVE_GET_1_NAMED_RESOURCE));
 #else
-#ifdef __BEOS__
+#ifdef __HAIKU__
 	tvec2 = (uint32 *)get_1_named_resource;
 	WriteMacInt32(tvec, tvec2[0]);
 	WriteMacInt32(tvec + 4, tvec2[1]);

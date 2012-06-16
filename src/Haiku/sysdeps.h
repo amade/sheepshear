@@ -55,17 +55,6 @@
 // Define for external components
 #define SHEEPSHAVER 1
 
-// Always use Real Addressing mode on native architectures
-// Otherwise, use Direct Addressing mode if NATMEM_OFFSET is set
-#if !defined(EMULATED_PPC)
-#include "ppc_asm.tmpl"
-#elif defined(NATMEM_OFFSET)
-#define DIRECT_ADDRESSING 1
-#else
-#define REAL_ADDRESSING 1
-#endif
-
-
 // High precision timing
 #define PRECISE_TIMING 1
 #define PRECISE_TIMING_BEOS 1

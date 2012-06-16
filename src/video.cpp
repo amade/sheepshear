@@ -297,7 +297,7 @@ static int16 VideoControl(uint32 pb, VidLocals *csSave)
 			uint8 *blue_gamma = NULL;
 			int gamma_data_width = 0;
 			if (csSave->gammaTable) {
-#ifdef __BEOS__
+#ifdef __HAIKU__
 				// Windows are gamma-corrected by BeOS
 				const bool can_do_gamma = (display_type == DIS_SCREEN);
 #else

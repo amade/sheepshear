@@ -33,7 +33,7 @@
 #include "sysdeps.h"
 #include "user_strings.h"
 
-#ifdef __BEOS__
+#ifdef __HAIKU__
 #define ELLIPSIS "\xE2\x80\xA6"
 #else
 #define ELLIPSIS "..."

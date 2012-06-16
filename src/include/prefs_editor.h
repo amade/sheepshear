@@ -21,7 +21,7 @@
 #ifndef PREFS_EDITOR_H
 #define PREFS_EDITOR_H
 
-#ifdef __BEOS__
+#ifdef __HAIKU__
 extern void PrefsEditor(uint32 msg);
 #else
 extern bool PrefsEditor(void);

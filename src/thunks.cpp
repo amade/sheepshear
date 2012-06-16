@@ -289,7 +289,7 @@ bool ThunksInit(void)
 		native_op[ID].tvect = base;					\
 		native_op[ID].func  = (uint32)FUNC;			\
 	} while (0)
-#elif defined(__BEOS__)
+#elif defined(__HAIKU__)
 #define DEFINE_NATIVE_OP(ID, FUNC) do {				\
 		native_op[ID].tvect = FUNC;					\
 		native_op[ID].func  = ((uint32 *)FUNC)[0];	\

@@ -85,6 +85,14 @@
 #define DEBUG 0
 #include "debug.h"
 
+
+#include <app/Application.h>
+#include <app/Roster.h>
+#include <interface/Alert.h>
+#include <storage/Entry.h>
+#include <storage/File.h>
+
+
 // Enable Execute68k() safety checks?
 #define SAFE_EXEC_68K 0
 
@@ -673,14 +681,14 @@ status_t SheepShear::emul_func(void *arg)
 
 	// Install interrupt signal handler
 	sigemptyset(&obj->sigusr1_action.sa_mask);
-	obj->sigusr1_action.sa_handler = (__signal_func_ptr)(obj->sigusr1_invoc);
+	obj->sigusr1_action.sa_handler = (__sighandler_t)(obj->sigusr1_invoc);
 	obj->sigusr1_action.sa_flags = 0;
 	obj->sigusr1_action.sa_userdata = arg;
 	sigaction(SIGUSR1, &obj->sigusr1_action, NULL);
 
 	// Install data access signal handler
 	sigemptyset(&obj->sigsegv_action.sa_mask);
-	obj->sigsegv_action.sa_handler = (__signal_func_ptr)(obj->sigsegv_invoc);
+	obj->sigsegv_action.sa_handler = (__sighandler_t)(obj->sigsegv_invoc);
 	obj->sigsegv_action.sa_flags = 0;
 	obj->sigsegv_action.sa_userdata = arg;
 	sigaction(SIGSEGV, &obj->sigsegv_action, NULL);
@@ -688,7 +696,7 @@ status_t SheepShear::emul_func(void *arg)
 #if !EMULATED_PPC
 	// Install illegal instruction signal handler
 	sigemptyset(&obj->sigill_action.sa_mask);
-	obj->sigill_action.sa_handler = (__signal_func_ptr)(obj->sigill_invoc);
+	obj->sigill_action.sa_handler = (__sighandler_t)(obj->sigill_invoc);
 	obj->sigill_action.sa_flags = 0;
 	obj->sigill_action.sa_userdata = arg;
 	sigaction(SIGILL, &obj->sigill_action, NULL);
@@ -1388,6 +1396,8 @@ void SheepShear::sigusr1_handler(vregs *r)
 
 	// Interrupt action depends on current run mode
 	switch (*(uint32 *)XLM_RUN_MODE) {
+
+#if !EMULATED_PPC
 		case MODE_68K:
 			// 68k emulator active, trigger 68k interrupt level 1
 			*(uint16 *)(kernel_data->v[0x67c >> 2]) = 1;
@@ -1411,6 +1421,7 @@ void SheepShear::sigusr1_handler(vregs *r)
 			}
 			break;
 #endif
+#endif /* !EMULATED_PPC */
 
 #if INTERRUPTS_IN_EMUL_OP_MODE
 		case MODE_EMUL_OP:
@@ -1480,7 +1491,6 @@ asm void SheepShear::sigsegv_invoc(register int sig, register void *arg, registe
 	addi	r1,r1,56
 	blr
 }
-#endif
 
 static void sigsegv_handler(vregs *r)
 {
@@ -1724,6 +1734,7 @@ rti:
 	r->r11 = segv_r[11];
 	r->r12 = segv_r[12];
 }
+#endif /* !EMULATED_PPC */
 
 
 /*
@@ -1751,7 +1762,6 @@ asm void SheepShear::sigill_invoc(register int sig, register void *arg, register
 	addi	r1,r1,56
 	blr
 }
-#endif
 
 static void sigill_handler(vregs *r)
 {
@@ -1933,6 +1943,7 @@ rti:
 	r->r11 = segv_r[11];
 	r->r12 = segv_r[12];
 }
+#endif /* !EMULATED_PPC */
 
 
 /*
