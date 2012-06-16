@@ -33,7 +33,7 @@
 
 
 // About window dimensions
-static const BRect about_frame = BRect(0, 0, 383, 99);
+static const BRect about_frame = BRect(0, 0, 425, 100);
 
 // Special colors
 const rgb_color fill_color = {216, 216, 216, 0};
@@ -115,16 +115,18 @@ public:
 	virtual void Draw(BRect update)
 	{
 		char str[256];
-		sprintf(str, GetString(STR_ABOUT_TEXT1), VERSION_MAJOR, VERSION_MINOR);
+		sprintf(str, GetString(STR_ABOUT_TEXT0), VERSION_MAJOR, VERSION_MINOR);
 
 		SetFont(be_bold_font);
 		SetDrawingMode(B_OP_OVER);
 		MovePenTo(20, 20);
 		DrawString(str);
 		SetFont(be_plain_font);
-		MovePenTo(20, 40);
-		DrawString(GetString(STR_ABOUT_TEXT2));
-		MovePenTo(20, 60);
+		MovePenTo(20, 35);
+		DrawString(B_UTF8_COPYRIGHT "2012 Alexander von Gluck IV");
+		MovePenTo(20, 65);
+		DrawString(GetString(STR_ABOUT_TEXT1));
+		MovePenTo(20, 80);
 		DrawString(B_UTF8_COPYRIGHT "1997-2008 Christian Bauer and Marc Hellwig");
 	}
 
