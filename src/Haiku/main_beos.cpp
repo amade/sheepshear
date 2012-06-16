@@ -1165,6 +1165,22 @@ asm void QuitEmulator(void)
 	mtlr	r0
 	blr
 }
+#else /* EMULATED_PPC */
+
+void Execute68k(uint32 pc, M68kRegisters *r)
+{
+	// Nop
+}
+
+void Execute68kTrap(uint16 trap, M68kRegisters *r)
+{
+	// Nop
+}
+
+void QuitEmulator(void)
+{
+	// Nop
+}
 #endif
 
 
@@ -1403,8 +1419,9 @@ void SheepShear::sigusr1_handler(vregs *r)
 			*(uint16 *)(kernel_data->v[0x67c >> 2]) = 1;
 			r->cr |= kernel_data->v[0x674 >> 2];
 			break;
+#endif /* !EMULATED_PPC */
 
-#if INTERRUPTS_IN_NATIVE_MODE
+#if !EMULATED_PPC && INTERRUPTS_IN_NATIVE_MODE
 		case MODE_NATIVE:
 			// 68k emulator inactive, in nanokernel?
 			if (r->r1 != KernelDataAddr) {
@@ -1421,9 +1438,8 @@ void SheepShear::sigusr1_handler(vregs *r)
 			}
 			break;
 #endif
-#endif /* !EMULATED_PPC */
 
-#if INTERRUPTS_IN_EMUL_OP_MODE
+#if !EMULATED_PPC && INTERRUPTS_IN_EMUL_OP_MODE
 		case MODE_EMUL_OP:
 			// 68k emulator active, within EMUL_OP routine, execute 68k interrupt routine directly when interrupt level is 0
 			if ((*(uint32 *)XLM_68K_R25 & 7) == 0) {
@@ -1460,6 +1476,7 @@ void SheepShear::sigusr1_handler(vregs *r)
 			}
 			break;
 #endif
+
 	}
 }
 
