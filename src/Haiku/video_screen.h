@@ -19,6 +19,9 @@
  */
 
 
+#include <app/Message.h>
+#include <app/MessageFilter.h>
+
 static bool drawing_enable = false;	// This flag indicated if the access to the screen is allowed
 static int page_num;				// Index of the currently displayed buffer
 

@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <device/scsi.h>
-#include <drivers/CAM.h>
+#include <device/CAM.h>
 
 #include "sysdeps.h"
 #include "main.h"

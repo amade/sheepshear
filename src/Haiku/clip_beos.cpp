@@ -19,11 +19,17 @@
  */
 
 #include <support/UTF8.h>
+#include "sysdeps.h"
 
 #include "clip.h"
 #include "main.h"
 #include "cpu_emulation.h"
 #include "emul_op.h"
+
+
+#include <app/Clipboard.h>
+#include <string.h>
+#include <translation/TranslatorRoster.h>
 
 #define DEBUG 0
 #include "debug.h"
@@ -267,7 +273,7 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 				clipper->AddData("application/x-SheepShear-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t)); 
 
 				// No, is there text in it?
-				if (clipper->FindData("text/plain", B_MIME_TYPE, &clip, &length) == B_OK) {
+				if (clipper->FindData("text/plain", B_MIME_TYPE, (const void**)&clip, &length) == B_OK) {
 					D(bug(" text/plain found\n"));
 
 					// Convert text from UTF-8 to Mac charset
@@ -330,7 +336,7 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 				};
 
 				// No, is there a pict ?
-				if (clipper->FindData("image/pict", B_MIME_TYPE, &clip, &length) == B_OK ) {
+				if (clipper->FindData("image/pict", B_MIME_TYPE, (const void**)&clip, &length) == B_OK ) {
 					D(bug(" image/pict found\n"));
 
 					// Add pict to Mac clipboard

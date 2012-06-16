@@ -29,6 +29,10 @@
 #include "about_window.h"
 #include "version.h"
 
+#include <app/Application.h>
+#include <app/MessageFilter.h>
+#include <interface/Menu.h>
+
 #define DEBUG 0
 #include "debug.h"
 
@@ -368,7 +372,7 @@ void VideoExit(void)
 		acquire_sem(video_lock);
 		close_display();
 		if (private_data != NULL) {
-			delete private_data->gammaTable;
+			//delete private_data->gammaTable;
 			delete private_data;
 		}
 

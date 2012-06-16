@@ -2,6 +2,7 @@
  *  video_window.h - Window video modes
  *
  *  SheepShaver (C) 1997-2008 Marc Hellwig and Christian Bauer
+ *  SheepShear (C) 2012 Alexander von Gluck IV
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +19,19 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 #include <DirectWindow.h>
+#include <app/Application.h>
+#include <app/Message.h>
+#include <app/MessageFilter.h>
+#include <app/MessageQueue.h>
+#include <game/WindowScreen.h>
+#include <interface/Bitmap.h>
+#include <interface/Menu.h>
+#include <interface/MenuBar.h>
+#include <interface/MenuItem.h>
+#include <interface/Screen.h>
+#include <interface/Window.h>
 
 
 // Messages
@@ -310,11 +323,11 @@ void MacWindow::DirectConnected(direct_buffer_info *info)
 
 void MacWindow::MessageReceived(BMessage *msg)
 {
-	BMessage *msg2;
 
 	switch (msg->what) {
-		case MSG_REDRAW: {
-
+		case MSG_REDRAW:
+		{
+			BMessage *msg2;
 			// Prevent backlog of messages
 			MessageQueue()->Lock();
 			while ((msg2 = MessageQueue()->FindMessage(MSG_REDRAW, 0)) != NULL) {
@@ -323,26 +336,27 @@ void MacWindow::MessageReceived(BMessage *msg)
 			}
 			MessageQueue()->Unlock();
 			
+#warning TODO: Do these screenblits properly! (checking for ppc)
 			// Convert Mac screen buffer to BeOS palette and blit
 			uint32 length = VModes[cur_mode].viRowBytes * VModes[cur_mode].viYsize;
 			if (mode == B_COLOR_8_BIT) {
 				// Palette conversion
 				uint8 *source = the_buffer - 1;
 				uint8 *dest = (uint8 *)the_bitmap->Bits() - 1;
-				for (int i=0; i<length; i++)
-					*++dest = remap_mac_be[*++source];
+//				for (int i=0; i<length; i++)
+//					*++dest = remap_mac_be[*++source];
 			} else if (mode == B_RGB_16_BIT) {
 				// Endianess conversion
 				uint16 *source = (uint16 *)the_buffer;
 				uint16 *dest = (uint16 *)the_bitmap->Bits() - 1;
-				for (int i=0; i<length/2; i++)
-					*++dest = __lhbrx(source++, 0);
+//				for (int i=0; i<length/2; i++)
+//					*++dest = __lhbrx(source++, 0);
 			} else if (mode == B_RGB_32_BIT) {
 				// Endianess conversion
 				uint32 *source = (uint32 *)the_buffer;
 				uint32 *dest = (uint32 *)the_bitmap->Bits() - 1;
-				for (int i=0; i<length/4; i++)
-					*++dest = __lwbrx(source++, 0);
+//				for (int i=0; i<length/4; i++)
+//					*++dest = __lwbrx(source++, 0);
 			}
 			BRect update_rect = BRect(0, 0, VModes[cur_mode].viXsize-1, VModes[cur_mode].viYsize-1);
 			main_view->DrawBitmapAsync(the_bitmap, update_rect, update_rect);

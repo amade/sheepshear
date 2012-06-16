@@ -17,9 +17,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef ETHER_H
 #define ETHER_H
+
+#include "cpu_emulation.h"
 
 struct queue;
 struct msgb;

@@ -189,8 +189,11 @@ void SysAddDiskPrefs(void)
 			if (!err)
 				err = entry.GetPath(&mount);
 		}
+#warning TODO: unmount inuse disk!
+#if 0
 		if (!err)
 			err = unmount(mount.Path());
+#endif
 		if (!err) {
 			char dev_name[B_FILE_NAME_LENGTH];
 			if (info.flags & B_FS_IS_READONLY) {
@@ -321,11 +324,14 @@ void *Sys_open(const char *name, bool read_only)
 		char str[256 + B_FILE_NAME_LENGTH];
 		sprintf(str, GetString(STR_VOLUME_IS_MOUNTED_WARN), mount_name);
 		WarningAlert(str);
+#warning TODO: unmount disk!
+#if 0
 		if (unmount(mount_name) != 0) {
 			sprintf(str, GetString(STR_CANNOT_UNMOUNT_WARN), mount_name);
 			WarningAlert(str);
 			return NULL;
 		}
+#endif
 	}
 
 	int fd = open(name, read_only ? O_RDONLY : O_RDWR);

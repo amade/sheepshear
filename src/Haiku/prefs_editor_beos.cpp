@@ -53,6 +53,7 @@
 #include <storage/Entry.h>
 #include <storage/FilePanel.h>
 #include <storage/Path.h>
+#include <storage/Volume.h>
 #include <support/SupportDefs.h>
 
 
@@ -558,6 +559,7 @@ static void add_serial_names(BPopUpMenu *menu, uint32 msg)
 		port->GetDeviceName(i, name);
 		menu->AddItem(new BMenuItem(name, new BMessage(msg)));
 	}
+	#if 0
 	if (SysInfo.platform_type == B_BEBOX_PLATFORM) {
 		BDirectory dir;
 		BEntry entry;
@@ -572,6 +574,7 @@ static void add_serial_names(BPopUpMenu *menu, uint32 msg)
 			}
 		}
 	}
+	#endif
 	delete port;
 }
 
@@ -628,8 +631,10 @@ BView *PrefsWindow::create_memory_pane(void)
 	off_t swap_space;
 	if (entry.GetSize(&swap_space) == B_NO_ERROR)
 		max_ramsize = swap_space / (1024 * 1024) - 8;
-	else
-		max_ramsize = SysInfo.max_pages * B_PAGE_SIZE / (1024 * 1024) - 8;
+	else {
+#warning TODO: Evaluate me SysInfo here!
+		//max_ramsize = SysInfo.max_pages * B_PAGE_SIZE / (1024 * 1024) - 8;
+	}
 
 	int32 value = PrefsFindInt32("ramsize") / (1024 * 1024);
 
@@ -665,6 +670,7 @@ void PrefsWindow::MessageReceived(BMessage *msg)
 {
 	switch (msg->what) {
 		case MSG_OK:				// "Start" button clicked
+		{
 			PrefsReplaceString("extfs", extfs_control->Text());
 			const char *str = rom_control->Text();
 			if (strlen(str))
@@ -676,12 +682,15 @@ void PrefsWindow::MessageReceived(BMessage *msg)
 			PostMessage(B_QUIT_REQUESTED);
 			be_app->PostMessage(ok_message);
 			break;
+		}
 
 		case MSG_CANCEL:			// "Quit" button clicked
+		{
 			send_quit_on_close = false;
 			PostMessage(B_QUIT_REQUESTED);
 			be_app->PostMessage(B_QUIT_REQUESTED);
 			break;
+		}
 
 		case B_ABOUT_REQUESTED:		// "About" menu item selected
 			OpenAboutWindow();
@@ -807,7 +816,8 @@ void PrefsWindow::MessageReceived(BMessage *msg)
 
 		case MSG_WINDOW_MODE: {
 			BCheckBox *source = NULL;
-			msg->FindPointer("source", &source);
+			//TODO: Fix me!
+			//msg->FindPointer("source", &source);
 			if (source == NULL)
 				break;
 			for (int i=0; i<NUM_WINDOW_MODES; i++) {
@@ -825,7 +835,8 @@ void PrefsWindow::MessageReceived(BMessage *msg)
 
 		case MSG_SCREEN_MODE: {
 			BCheckBox *source = NULL;
-			msg->FindPointer("source", &source);
+			//TODO: Fix me!
+			//msg->FindPointer("source", &source);
 			if (source == NULL)
 				break;
 			for (int i=0; i<NUM_SCREEN_MODES; i++) {
@@ -863,7 +874,8 @@ void PrefsWindow::MessageReceived(BMessage *msg)
 
 		case MSG_SER_A: {
 			BMenuItem *source = NULL;
-			msg->FindPointer("source", &source);
+			//TODO: Fix me!
+			//msg->FindPointer("source", &source);
 			if (source)
 				PrefsReplaceString("seriala", source->Label());
 			break;
@@ -871,7 +883,8 @@ void PrefsWindow::MessageReceived(BMessage *msg)
 
 		case MSG_SER_B: {
 			BMenuItem *source = NULL;
-			msg->FindPointer("source", &source);
+			//TODO: Fix me!
+			//msg->FindPointer("source", &source);
 			if (source)
 				PrefsReplaceString("serialb", source->Label());
 			break;

@@ -27,6 +27,15 @@
 #include "user_strings.h"
 #include "sheep_net.h"
 
+#include <app/Application.h>
+#include <app/Message.h>
+#include <app/MessageFilter.h>
+#include <app/MessageQueue.h>
+#include <app/Roster.h>
+#include <storage/FindDirectory.h>
+#include <storage/Path.h>
+
+
 #define DEBUG 0
 #include "debug.h"
 
@@ -142,6 +151,8 @@ i_wanna_try_that_again:
 				}
 			}
 		}
+#warning TODO: Review!!!
+#if 0
 		BPath path;
 		find_directory(B_BEOS_BOOT_DIRECTORY, &path);
 		path.Append("Netscript");
@@ -151,6 +162,7 @@ i_wanna_try_that_again:
 		status_t l;
 		wait_for_thread(net_server, &l);
 		goto i_wanna_try_that_again;
+#endif
 	}
 
 	// Set up communications with add-on
@@ -159,7 +171,7 @@ i_wanna_try_that_again:
 		WarningAlert(GetString(STR_NET_ADDON_INIT_FAILED));
 		return;
 	}
-	if ((buffer_area = clone_area("local packet buffer", &net_buffer_ptr, B_ANY_ADDRESS, B_READ_AREA | B_WRITE_AREA, handler_buffer)) < B_NO_ERROR) {
+	if ((buffer_area = clone_area("local packet buffer", (void**)&net_buffer_ptr, B_ANY_ADDRESS, B_READ_AREA | B_WRITE_AREA, handler_buffer)) < B_NO_ERROR) {
 		D(bug("EtherInit: couldn't clone packet area\n"));
 		WarningAlert(GetString(STR_NET_ADDON_CLONE_FAILED));
 		return;
@@ -255,7 +267,9 @@ void AO_enable_multicast(uint32 addr)
 		if (p->cmd & IN_USE) {
 			D(bug("WARNING: couldn't enable multicast address\n"));
 		} else {
-			Mac2host_memcpy(p->data, addr, 6);
+#warning TODO: Mac2host_memcpy!!!
+			memcpy(p->data, &addr, 6);
+//			Mac2host_memcpy(p->data, addr, 6);
 			p->length = 6;
 			p->cmd = IN_USE | (ADD_MULTICAST << 8);
 			wr_pos = (wr_pos + 1) % WRITE_PACKET_COUNT;
@@ -277,7 +291,9 @@ void AO_disable_multicast(uint32 addr)
 		if (p->cmd & IN_USE) {
 			D(bug("WARNING: couldn't enable multicast address\n"));
 		} else {
-			Mac2host_memcpy(p->data, addr, 6);
+#warning TODO: Mac2host_memcpy!!!
+			memcpy(p->data, &addr, 6);
+//			Mac2host_memcpy(p->data, addr, 6);
 			p->length = 6;
 			p->cmd = IN_USE | (REMOVE_MULTICAST << 8);
 			wr_pos = (wr_pos + 1) % WRITE_PACKET_COUNT;
@@ -307,7 +323,9 @@ void AO_transmit_packet(uint32 mp_arg)
 			// Copy packet to buffer
 			uint8 *start;
 			uint8 *bp = start = p->data;
-			mblk_t *mp = Mac2HostAddr(mp_arg);
+#warning TODO: Fix!!
+//			mblk_t *mp = Mac2HostAddr(mp_arg);
+			mblk_t *mp = 0;
 			while (mp) {
 				uint32 size = mp->b_wptr - mp->b_rptr;
 				memcpy(bp, mp->b_rptr, size);

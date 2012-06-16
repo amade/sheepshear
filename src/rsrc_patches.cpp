@@ -681,6 +681,7 @@ void named_check_load_invoc(uint32 type, uint32 name, uint32 h)
 	CheckLoad(type, (char *)Mac2HostAddr(name), Mac2HostAddr(p), size);
 }
 
+#if 0
 #ifdef __HAIKU__
 static asm void **get_resource(register uint32 type, register int16 id)
 {
@@ -912,6 +913,7 @@ static asm void **get_1_named_resource(register uint32 type, register uint32 nam
 	addi	r1,r1,56+12
 	blr
 }
+#endif
 #else
 // Routines in asm_linux.S
 extern "C" void get_resource(void);
