@@ -23,6 +23,9 @@
 
 #include "cpu_emulation.h"
 
+#include <string.h>
+
+
 /*
  *  Native function invocation
  */

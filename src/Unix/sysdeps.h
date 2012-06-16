@@ -44,6 +44,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <signal.h>
+#include <sigsegv.h>
 
 #ifdef HAVE_PTHREADS
 # include <pthread.h>

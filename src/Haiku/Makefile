@@ -7,14 +7,14 @@
 ## Application Specific Settings ---------------------------------------------
 
 # specify the name of the binary
-NAME= SheepShear
+NAME=SheepShear
 
 # specify the type of binary
 #	APP:	Application
 #	SHARED:	Shared library or add-on
 #	STATIC:	Static library archive
 #	DRIVER: Kernel Driver
-TYPE= APP
+TYPE=APP
 
 #	add support for new Pe and Eddie features
 #	to fill in generic makefile
@@ -30,7 +30,7 @@ TYPE= APP
 #	if two source files with the same name (source.c or source.cpp)
 #	are included from different directories.  Also note that spaces
 #	in folder names do not work well with this makefile.
-SRCS= ../main.cpp main_beos.cpp ../prefs.cpp ../prefs_items.cpp prefs_beos.cpp \
+SRCS=../main.cpp main_beos.cpp ../prefs.cpp ../prefs_items.cpp prefs_beos.cpp \
     prefs_editor_beos.cpp sys_beos.cpp ../rom_patches.cpp ../rsrc_patches.cpp \
     ../emul_op.cpp ../name_registry.cpp ../macos_util.cpp ../timer.cpp \
     timer_beos.cpp ../xpram.cpp xpram_beos.cpp ../adb.cpp clip_beos.cpp \
@@ -41,7 +41,7 @@ SRCS= ../main.cpp main_beos.cpp ../prefs.cpp ../prefs_items.cpp prefs_beos.cpp \
 
 #	specify the resource files to use
 #	full path or a relative path to the resource file can be used.
-RSRCS= SheepShear.rsrc
+RSRCS=SheepShear.rsrc
 
 # @<-src@ 
 #%}
@@ -58,7 +58,7 @@ RSRCS= SheepShear.rsrc
 #		naming scheme you need to specify the path to the library
 #		and it's name
 #		library: my_lib.a entry: my_lib.a or path/my_lib.a
-LIBS= be tracker game media translation textencoding device GL
+LIBS=be tracker game media translation textencoding device GL
 
 #	specify additional paths to directories following the standard
 #	libXXX.so or libXXX.a naming scheme.  You can specify full paths
@@ -71,42 +71,42 @@ LIBPATHS=
 #	additional paths to look for system headers
 #	thes use the form: #include <header>
 #	source file directories are NOT auto-included here
-SYSTEM_INCLUDE_PATHS = 
+SYSTEM_INCLUDE_PATHS= 
 
 #	additional paths to look for local headers
 #	thes use the form: #include "header"
 #	source file directories are automatically included
-LOCAL_INCLUDE_PATHS = ../include SheepDriver SheepNet
+LOCAL_INCLUDE_PATHS= ../include ../kpx_cpu/src SheepDriver SheepNet
 
 #	specify the level of optimization that you desire
 #	NONE, SOME, FULL
-OPTIMIZE= FULL
+OPTIMIZE=FULL
 
 #	specify any preprocessor symbols to be defined.  The symbols will not
 #	have their values set automatically; you must supply the value (if any)
 #	to use.  For example, setting DEFINES to "DEBUG=1" will cause the
 #	compiler option "-DDEBUG=1" to be used.  Setting DEFINES to "DEBUG"
 #	would pass "-DDEBUG" on the compiler's command line.
-DEFINES= 
+DEFINES=
 
 #	specify special warning levels
 #	if unspecified default warnings will be used
 #	NONE = supress all warnings
 #	ALL = enable all warnings
-WARNINGS = 
+WARNINGS=
 
 #	specify whether image symbols will be created
 #	so that stack crawls in the debugger are meaningful
 #	if TRUE symbols will be created
-SYMBOLS = 
+SYMBOLS=
 
 #	specify debug settings
 #	if TRUE will allow application to be run from a source-level
 #	debugger.  Note that this will disable all optimzation.
-DEBUGGER = 
+DEBUGGER=
 
 #	specify additional compiler flags for all files
-COMPILER_FLAGS = -prefix BeHeaders
+COMPILER_FLAGS=
 
 #	specify additional linker flags
 LINKER_FLAGS =
@@ -114,4 +114,3 @@ LINKER_FLAGS =
 
 ## include the makefile-engine
 include /boot/develop/etc/makefile-engine
-

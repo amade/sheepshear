@@ -45,8 +45,10 @@
 #include "rom_patches.h"
 #include "user_strings.h"
 #include "vm_alloc.h"
-#include "sigsegv.h"
 #include "thunks.h"
+
+#include <arpa/inet.h>
+
 
 #define DEBUG 0
 #include "debug.h"

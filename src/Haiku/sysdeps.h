@@ -27,8 +27,11 @@
 #endif
 
 #include <assert.h>
-#include <sys/types.h>
+#include <interface/GraphicsDefs.h>
 #include <KernelKit.h>
+#include <support/ByteOrder.h>
+#include <string.h>
+#include <sys/types.h>
 
 #include "user_strings_beos.h"
 
@@ -37,16 +40,42 @@
 #define EMULATED_PPC 0
 #define WORDS_BIGENDIAN 1
 #define SYSTEM_CLOBBERS_R2 1
+#define REAL_ADDRESSING 1
 #else
+// Not PowerPC
 #define EMULATED_PPC 1
 #undef  WORDS_BIGENDIAN
+#ifdef NATMEM_OFFSET
+#define DIRECT_ADDRESSING 1
+#else
+#define REAL_ADDRESSING 1
 #endif
+#endif
+
+// Define for external components
+#define SHEEPSHAVER 1
+
+// Always use Real Addressing mode on native architectures
+// Otherwise, use Direct Addressing mode if NATMEM_OFFSET is set
+#if !defined(EMULATED_PPC)
+#include "ppc_asm.tmpl"
+#elif defined(NATMEM_OFFSET)
+#define DIRECT_ADDRESSING 1
+#else
+#define REAL_ADDRESSING 1
+#endif
+
 
 // High precision timing
 #define PRECISE_TIMING 1
 #define PRECISE_TIMING_BEOS 1
 
 #define POWERPC_ROM 1
+
+// Byte swap functions
+#define bswap_16 B_SWAP_INT16
+#define bswap_32 B_SWAP_INT32
+#define bswap_64 B_SWAP_INT64
 
 // Time data type for Time Manager emulation
 typedef bigtime_t tm_time_t;
