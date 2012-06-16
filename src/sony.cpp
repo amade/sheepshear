@@ -264,7 +264,9 @@ int16 SonyOpen(uint32 pb, uint32 dce)
 
 	// Set up DCE
 	WriteMacInt32(dce + dCtlPosition, 0);
-	WriteMacInt16(dce + dCtlQHdr + qFlags, ReadMacInt16(dce + dCtlQHdr + qFlags) & 0xff00 | 3);	// Version number, must be >=3 or System 8 will replace us
+	// Version number, must be >=3 or System 8 will replace us
+	WriteMacInt16(dce + dCtlQHdr + qFlags,
+		(ReadMacInt16(dce + dCtlQHdr + qFlags) & 0xff00) | 3);
 	acc_run_called = false;
 
 	// Install driver again with refnum -2 (HD20)
@@ -506,7 +508,8 @@ int16 SonyStatus(uint32 pb, uint32 dce)
 			break;
 
 		case 10:	// Get disk type
-			WriteMacInt32(pb + csParam, ReadMacInt32(info->status + dsMFMDrive) & 0xffffff00 | 0xfe);
+			WriteMacInt32(pb + csParam,
+				(ReadMacInt32(info->status + dsMFMDrive) & 0xffffff00) | 0xfe);
 			break;
 
 		case 0x4456: // Duplicator version supported ('DV')
