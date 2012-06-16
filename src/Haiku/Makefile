@@ -41,7 +41,7 @@ SRCS=../main.cpp main_beos.cpp ../prefs.cpp ../prefs_items.cpp prefs_beos.cpp \
 
 #	specify the resource files to use
 #	full path or a relative path to the resource file can be used.
-RSRCS=SheepShear.rsrc
+RDEFS=SheepShear.rdef
 
 # @<-src@ 
 #%}
