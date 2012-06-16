@@ -424,7 +424,7 @@ bool NQD_bitblt_hook(uint32 p)
 		&& ReadMacInt32(p + 0x130) == 0
 		&& ReadMacInt32(p + acclSrcPixelSize) >= 8
 		&& ReadMacInt32(p + acclSrcPixelSize) == ReadMacInt32(p + acclDestPixelSize)
-		&& (int32)(ReadMacInt32(p + acclSrcRowBytes) ^ ReadMacInt32(p + acclDestRowBytes)) >= 0 &&	// same sign?
+		&& (int32)(ReadMacInt32(p + acclSrcRowBytes) ^ ReadMacInt32(p + acclDestRowBytes)) >= 0 // same sign?
 		&& ReadMacInt32(p + acclTransferMode) == 0 // srcCopy?
 		&& (int32)ReadMacInt32(p + 0x15c) > 0) {
 
