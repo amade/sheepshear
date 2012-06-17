@@ -181,6 +181,9 @@ private:
 	static void sigill_invoc(int sig, void *arg, vregs *r);
 	void jump_to_rom(uint32 entry);
 
+	status_t DriverConnect();
+	void DriverDisconnect();
+
 	void init_rom(void);
 	void load_rom(void);
 
@@ -375,20 +378,8 @@ void SheepShear::StartEmulator(void)
 	char str[256];
 
 	// Open sheep driver and remap low memory
-	sheep_fd = open("/dev/sheep", 0);
-	if (sheep_fd < 0) {
-		sprintf(str, GetString(STR_NO_SHEEP_DRIVER_ERR), strerror(sheep_fd), sheep_fd);
-		ErrorAlert(str);
-		PostMessage(B_QUIT_REQUESTED);
+	if (DriverConnect() != B_OK)
 		return;
-	}
-	status_t res = ioctl(sheep_fd, SHEEP_UP);
-	if (res < 0) {
-		sprintf(str, GetString(STR_SHEEP_UP_ERR), strerror(res), res);
-		ErrorAlert(str);
-		PostMessage(B_QUIT_REQUESTED);
-		return;
-	}
 
 	// Create areas for Kernel Data
 	kernel_data = (KernelData *)KERNEL_DATA_BASE;
@@ -519,6 +510,47 @@ void SheepShear::StartEmulator(void)
 
 
 /*
+ * Connect to kernel driver on non-emulated PowerPC machines
+ */
+status_t
+SheepShear::DriverConnect()
+{
+	#if !EMULATED_PPC
+    sheep_fd = open("/dev/sheep", 0);
+    if (sheep_fd < 0) {
+        sprintf(str, GetString(STR_NO_SHEEP_DRIVER_ERR), strerror(sheep_fd), sheep_fd);
+        ErrorAlert(str);
+        PostMessage(B_QUIT_REQUESTED);
+        return B_ERROR;
+    }
+    status_t res = ioctl(sheep_fd, SHEEP_UP);
+    if (res < 0) {
+        sprintf(str, GetString(STR_SHEEP_UP_ERR), strerror(res), res);
+        ErrorAlert(str);
+        PostMessage(B_QUIT_REQUESTED);
+        return B_ERROR;
+    }
+	#endif
+	return B_OK;
+}
+
+
+/*
+ * Disconnect from kernel driver on non-emulated PowerPC machines
+ */
+void
+SheepShear::DriverDisconnect()
+{
+	#if !EMULATED_PPC
+    if (sheep_fd >= 0) {
+        ioctl(sheep_fd, SHEEP_DOWN);
+        close(sheep_fd);
+    }
+	#endif
+}
+
+
+/*
  *  Quit requested
  */
 
@@ -583,10 +615,7 @@ void SheepShear::Quit(void)
 		delete_area(kernel_area);
 
 	// Unmap low memory and close sheep driver
-	if (sheep_fd >= 0) {
-		ioctl(sheep_fd, SHEEP_DOWN);
-		close(sheep_fd);
-	}
+	DriverDisconnect();
 
 	// Exit system routines
 	SysExit();
