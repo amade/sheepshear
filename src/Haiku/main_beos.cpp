@@ -82,7 +82,7 @@
 
 #include "sheep_driver.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 
@@ -646,7 +646,7 @@ void SheepShear::init_rom(void)
 	if (rom_area < 0)
 		throw area_error();
 	ROMBaseHost = (uint8 *)ROMBase;
-	D(bug("ROM area %ld at %p\n", rom_area, rom_addr));
+	D(bug("ROM area %ld at %p\n", rom_area, ROMBase));
 
 	// Load ROM
 	load_rom();
