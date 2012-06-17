@@ -225,7 +225,7 @@ uint32 PVR;				// Theoretical PVR
 int64 CPUClockSpeed;	// Processor clock speed (Hz)
 int64 BusClockSpeed;	// Bus clock speed (Hz)
 int64 TimebaseSpeed;	// Timebase clock speed (Hz)
-system_info SysInfo;	// System information
+system_info fSysInfo;	// System information
 uint8 *RAMBaseHost;		// Base address of Mac RAM (host address space)
 uint8 *ROMBaseHost;		// Base address of Mac ROM (host address space)
 
@@ -282,8 +282,8 @@ void SheepShear::ReadyToRun(void)
 #endif
 
 	// Get system info
-	get_system_info(&SysInfo);
-	switch (SysInfo.cpu_type) {
+	get_system_info(&fSysInfo);
+	switch (fSysInfo.cpu_type) {
 		case B_CPU_PPC_601:
 			PVR = 0x00010000;
 			break;
@@ -306,8 +306,8 @@ void SheepShear::ReadyToRun(void)
 			PVR = 0x00040000;
 			break;
 	}
-	CPUClockSpeed = SysInfo.cpu_clock_speed;
-	BusClockSpeed = SysInfo.bus_clock_speed;
+	CPUClockSpeed = fSysInfo.cpu_clock_speed;
+	BusClockSpeed = fSysInfo.bus_clock_speed;
 	TimebaseSpeed = BusClockSpeed / 4;
 
 	// Delete old areas
@@ -339,7 +339,7 @@ void SheepShear::ReadyToRun(void)
 	SysInit();
 
 	// Test amount of RAM available for areas
-	if (SysInfo.max_pages * B_PAGE_SIZE < 16 * 1024 * 1024) {
+	if (fSysInfo.max_pages * B_PAGE_SIZE < 16 * 1024 * 1024) {
 		ErrorAlert(GetString(STR_NOT_ENOUGH_MEMORY_ERR));
 		PostMessage(B_QUIT_REQUESTED);
 		return;

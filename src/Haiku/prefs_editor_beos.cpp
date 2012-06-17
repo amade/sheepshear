@@ -257,6 +257,8 @@ private:
 	BFilePanel *add_volume_panel;
 	BFilePanel *create_volume_panel;
 
+	system_info	fSysInfo;
+
 	uint32 maxRamsize;		// In MB
 };
 
@@ -282,6 +284,8 @@ PrefsWindow::PrefsWindow(uint32 msg) : BWindow(BRect(0, 0, 475, 289), GetString(
 	int i;
 	ok_message = msg;
 	send_quit_on_close = true;
+
+	get_system_info(&fSysInfo);
 
 	// Move window to right position
 	Lock();
@@ -562,7 +566,7 @@ static void add_serial_names(BPopUpMenu *menu, uint32 msg)
 		menu->AddItem(new BMenuItem(name, new BMessage(msg)));
 	}
 	#if 0
-	if (SysInfo.platform_type == B_BEBOX_PLATFORM) {
+	if (fSysInfo.platform_type == B_BEBOX_PLATFORM) {
 		BDirectory dir;
 		BEntry entry;
 		dir.SetTo("/dev/parallel");
@@ -634,9 +638,8 @@ BView *PrefsWindow::CreatePaneMemory(void)
 	if (entry.GetSize(&swap_space) == B_NO_ERROR)
 		maxRamsize = swap_space / (1024 * 1024) - 8;
 	else {
-#warning TODO: Evaluate me SysInfo here!
-		maxRamsize = 512;
-		//maxRamsize = SysInfo.max_pages * B_PAGE_SIZE / (1024 * 1024) - 8;
+		// Maximum ram size is system memory minus 256MB
+		maxRamsize = fSysInfo.max_pages * B_PAGE_SIZE / (1024 * 1024) - 256;
 	}
 
 	int32 ramSize = PrefsFindInt32("ramsize") / (1024 * 1024);
