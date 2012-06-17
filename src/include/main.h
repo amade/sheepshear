@@ -17,11 +17,15 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef MAIN_H
 #define MAIN_H
 
+
+#include "adb.h"
+
+
 // Global variables
+extern ADBInput *gADBInput;		// ADB input driver
 extern void *TOC;				// TOC pointer
 extern void *R13;				// r13 register
 extern uint32 KernelDataAddr;	// Address of Kernel Data
@@ -34,6 +38,7 @@ extern int64 TimebaseSpeed;		// Timebase clock speed (Hz)
 #ifdef __BEOS__
 extern system_info SysInfo;		// System information
 #endif
+
 
 // 68k register structure (for Execute68k())
 struct M68kRegisters {

@@ -1,7 +1,8 @@
 /*
  *  adb.cpp - ADB emulation (mouse/keyboard)
  *
- *  Basilisk II (C) Christian Bauer
+ *  SheepShear, 2012 Alexander von Gluck IV
+ *  Rewritten from Basilisk II (C) Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -71,8 +72,7 @@ static B2_mutex *mouse_lock;
 /*
  *  Initialize ADB emulation
  */
-
-void ADBInit(void)
+ADBInput::ADBInput()
 {
 	mouse_lock = B2_create_mutex();
 	m_keyboard_type = (uint8)PrefsFindInt32("keyboardtype");
@@ -83,8 +83,7 @@ void ADBInit(void)
 /*
  *  Exit ADB emulation
  */
-
-void ADBExit(void)
+ADBInput::~ADBInput()
 {
 	if (mouse_lock) {
 		B2_delete_mutex(mouse_lock);
@@ -96,8 +95,8 @@ void ADBExit(void)
 /*
  *  ADBOp() replacement
  */
-
-void ADBOp(uint8 op, uint8 *data)
+void
+ADBInput::Op(uint8 op, uint8 *data)
 {
 	D(bug("ADBOp op %02x, data %02x %02x %02x\n", op, data[0], data[1], data[2]));
 
@@ -230,8 +229,8 @@ void ADBOp(uint8 op, uint8 *data)
 /*
  *  Mouse was moved (x/y are absolute or relative, depending on ADBSetRelMouseMode())
  */
-
-void ADBMouseMoved(int x, int y)
+void
+ADBInput::MouseMoved(int x, int y)
 {
 	B2_lock_mutex(mouse_lock);
 	if (relative_mouse) {
@@ -248,8 +247,8 @@ void ADBMouseMoved(int x, int y)
 /* 
  *  Mouse button pressed
  */
-
-void ADBMouseDown(int button)
+void
+ADBInput::MouseDown(int button)
 {
 	mouse_button[button] = true;
 	SetInterruptFlag(INTFLAG_ADB);
@@ -260,8 +259,8 @@ void ADBMouseDown(int button)
 /*
  *  Mouse button released
  */
-
-void ADBMouseUp(int button)
+void
+ADBInput::MouseUp(int button)
 {
 	mouse_button[button] = false;
 	SetInterruptFlag(INTFLAG_ADB);
@@ -272,8 +271,8 @@ void ADBMouseUp(int button)
 /*
  *  Set mouse mode (absolute or relative)
  */
-
-void ADBSetRelMouseMode(bool relative)
+void
+ADBInput::SetRelMouseMode(bool relative)
 {
 	if (relative_mouse != relative) {
 		relative_mouse = relative;
@@ -285,8 +284,8 @@ void ADBSetRelMouseMode(bool relative)
 /*
  *  Key pressed ("code" is the Mac key code)
  */
-
-void ADBKeyDown(int code)
+void
+ADBInput::KeyDown(int code)
 {
 	// Add keycode to buffer
 	key_buffer[key_write_ptr] = code;
@@ -304,8 +303,8 @@ void ADBKeyDown(int code)
 /*
  *  Key released ("code" is the Mac key code)
  */
-
-void ADBKeyUp(int code)
+void
+ADBInput::KeyUp(int code)
 {
 	// Add keycode to buffer
 	key_buffer[key_write_ptr] = code | 0x80;	// Key-up flag
@@ -324,7 +323,8 @@ void ADBKeyUp(int code)
  *  ADB interrupt function (executed as part of 60Hz interrupt)
  */
 
-void ADBInterrupt(void)
+void
+ADBInput::Interrupt(void)
 {
 	M68kRegisters r;
 

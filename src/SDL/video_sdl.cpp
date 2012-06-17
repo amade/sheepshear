@@ -605,7 +605,7 @@ public:
 	virtual void suspend(void) {}
 	virtual void resume(void) {}
 	virtual void toggle_mouse_grab(void) {}
-	virtual void mouse_moved(int x, int y) { ADBMouseMoved(x, y); }
+	virtual void mouse_moved(int x, int y) { gADBInput->MouseMoved(x, y); }
 
 	void disable_mouse_accel(void);
 	void restore_mouse_accel(void);
@@ -742,7 +742,7 @@ driver_window::driver_window(SDL_monitor_desc &m)
 	int aligned_height = (height + 15) & ~15;
 
 	// Set absolute mouse mode
-	ADBSetRelMouseMode(mouse_grabbed);
+	gADBInput->SetRelMouseMode(mouse_grabbed);
 
 	// This is ugly:
 	// If we're switching resolutions (ie, not setting it for the first time),
@@ -879,7 +879,7 @@ void driver_window::ungrab_mouse(void)
 void driver_window::mouse_moved(int x, int y)
 {
 	mouse_last_x = x; mouse_last_y = y;
-	ADBMouseMoved(x, y);
+	gADBInput->MouseMoved(x, y);
 }
 
 
@@ -895,7 +895,7 @@ driver_fullscreen::driver_fullscreen(SDL_monitor_desc &m)
 	int aligned_height = (height + 15) & ~15;
 
 	// Set absolute mouse mode
-	ADBSetRelMouseMode(false);
+	gADBInput->SetRelMouseMode(false);
 
 	// Create surface
 	int depth = sdl_depth_of_video_depth(VIDEO_MODE_DEPTH);
@@ -1767,21 +1767,21 @@ static void handle_events(void)
 			case SDL_MOUSEBUTTONDOWN: {
 				unsigned int button = event.button.button;
 				if (button == SDL_BUTTON_LEFT)
-					ADBMouseDown(0);
+					gADBInput->MouseDown(0);
 				else if (button == SDL_BUTTON_RIGHT)
-					ADBMouseDown(1);
+					gADBInput->MouseDown(1);
 				else if (button == SDL_BUTTON_MIDDLE)
-					ADBMouseDown(2);
+					gADBInput->MouseDown(2);
 				else if (button < 6) {	// Wheel mouse
 					if (mouse_wheel_mode == 0) {
 						int key = (button == 5) ? 0x79 : 0x74;	// Page up/down
-						ADBKeyDown(key);
-						ADBKeyUp(key);
+						gADBInput->KeyDown(key);
+						gADBInput->KeyUp(key);
 					} else {
 						int key = (button == 5) ? 0x3d : 0x3e;	// Cursor up/down
 						for(int i=0; i<mouse_wheel_lines; i++) {
-							ADBKeyDown(key);
-							ADBKeyUp(key);
+							gADBInput->KeyDown(key);
+							gADBInput->KeyUp(key);
 						}
 					}
 				}
@@ -1790,11 +1790,11 @@ static void handle_events(void)
 			case SDL_MOUSEBUTTONUP: {
 				unsigned int button = event.button.button;
 				if (button == SDL_BUTTON_LEFT)
-					ADBMouseUp(0);
+					gADBInput->MouseUp(0);
 				else if (button == SDL_BUTTON_RIGHT)
-					ADBMouseUp(1);
+					gADBInput->MouseUp(1);
 				else if (button == SDL_BUTTON_MIDDLE)
-					ADBMouseUp(2);
+					gADBInput->MouseUp(2);
 				break;
 			}
 
@@ -1815,14 +1815,14 @@ static void handle_events(void)
 					if (!emul_suspended) {
 						if (code == 0x39) {	// Caps Lock pressed
 							if (caps_on) {
-								ADBKeyUp(code);
+								gADBInput->KeyUp(code);
 								caps_on = false;
 							} else {
-								ADBKeyDown(code);
+								gADBInput->KeyDown(code);
 								caps_on = true;
 							}
 						} else
-							ADBKeyDown(code);
+							gADBInput->KeyDown(code);
 						if (code == 0x36)
 							ctrl_down = true;
 					} else {
@@ -1842,14 +1842,14 @@ static void handle_events(void)
 				if (code >= 0) {
 					if (code == 0x39) {	// Caps Lock released
 						if (caps_on) {
-							ADBKeyUp(code);
+							gADBInput->KeyUp(code);
 							caps_on = false;
 						} else {
-							ADBKeyDown(code);
+							gADBInput->KeyDown(code);
 							caps_on = true;
 						}
 					} else
-						ADBKeyUp(code);
+						gADBInput->KeyUp(code);
 					if (code == 0x36)
 						ctrl_down = false;
 				}
@@ -1875,8 +1875,8 @@ static void handle_events(void)
 
 			// Window "close" widget clicked
 			case SDL_QUIT:
-				ADBKeyDown(0x7f);	// Power key
-				ADBKeyUp(0x7f);
+				gADBInput->KeyDown(0x7f);	// Power key
+				gADBInput->KeyUp(0x7f);
 				break;
 
 			// Application activate/deactivate; consume the event but otherwise ignore it

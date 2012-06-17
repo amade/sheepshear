@@ -20,6 +20,8 @@
  */
 
 
+#include "adb.h"
+
 #include <DirectWindow.h>
 #include <app/Application.h>
 #include <app/Message.h>
@@ -218,7 +220,7 @@ MacWindow::MacWindow(BRect frame) : BDirectWindow(frame, GetString(STR_WINDOW_TI
 	ResizeBy(0, mbar_height);
 
 	// Set mouse mode and scroll lock state
-	ADBSetRelMouseMode(false);
+	gADBInput->SetRelMouseMode(false);
 	mouse_in_view = true;
 	old_scroll_lock_state = modifiers() & B_SCROLL_LOCK;
 	if (old_scroll_lock_state)

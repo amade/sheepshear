@@ -19,6 +19,7 @@
  */
 
 #include "sysdeps.h"
+#include "adb.h"
 #include "cpu_emulation.h"
 #include "main.h"
 #include "prefs.h"
@@ -986,7 +987,7 @@ void HandleInterrupt(powerpc_registers *r)
 			if (HasMacStarted()) {
 				if (InterruptFlags & INTFLAG_VIA) {
 					ClearInterruptFlag(INTFLAG_VIA);
-					ADBInterrupt();
+					gADBInput->Interrupt();
 					ExecuteNative(NATIVE_VIDEO_VBL);
 				}
 			}

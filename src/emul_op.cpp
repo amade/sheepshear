@@ -210,7 +210,7 @@ void EmulOp(M68kRegisters *r, uint32 pc, int selector)
 			break;
 
 		case OP_ADBOP:				// ADBOp() replacement
-			ADBOp(r->d[0], Mac2HostAddr(ReadMacInt32(r->a[0])));
+			gADBInput->Op(r->d[0], Mac2HostAddr(ReadMacInt32(r->a[0])));
 			break;
 
 		case OP_INSTIME:			// InsTime() replacement
@@ -334,7 +334,7 @@ void EmulOp(M68kRegisters *r, uint32 pc, int selector)
 				}
 				if (InterruptFlags & INTFLAG_ADB) {
 					ClearInterruptFlag(INTFLAG_ADB);
-					ADBInterrupt();
+					gADBInput->Interrupt();
 				}
 			} else
 				r->d[0] = 1;

@@ -20,10 +20,10 @@
 
 #include "sysdeps.h"
 
+#include "adb.h"
 #include "video.h"
 #include "video_defs.h"
 #include "main.h"
-#include "adb.h"
 #include "prefs.h"
 #include "user_strings.h"
 #include "about_window.h"
@@ -475,9 +475,9 @@ static filter_result filter_func(BMessage *msg, BHandler **target, BMessageFilte
 			if (mac_code == 0xff)
 				return B_DISPATCH_MESSAGE;
 			if (msg->what == B_KEY_DOWN)
-				ADBKeyDown(mac_code);
+				gADBInput->KeyDown(mac_code);
 			else
-				ADBKeyUp(mac_code);
+				gADBInput->KeyUp(mac_code);
 			return B_SKIP_MESSAGE;
 		}
 
@@ -492,9 +492,9 @@ static filter_result filter_func(BMessage *msg, BHandler **target, BMessageFilte
 					if (mac_code == 0xff)
 						continue;
 					if (mods & mask)
-						ADBKeyDown(mac_code);
+						gADBInput->KeyDown(mac_code);
 					else
-						ADBKeyUp(mac_code);
+						gADBInput->KeyUp(mac_code);
 				}
 			return B_SKIP_MESSAGE;
 		}
@@ -502,25 +502,25 @@ static filter_result filter_func(BMessage *msg, BHandler **target, BMessageFilte
 		case B_MOUSE_MOVED: {
 			BPoint point;
 			msg->FindPoint("where", &point);
-			ADBMouseMoved(int(point.x), int(point.y));
+			gADBInput->MouseMoved(int(point.x), int(point.y));
 			return B_DISPATCH_MESSAGE;	// Otherwise BitmapView::MouseMoved() wouldn't be called
 		}
 
 		case B_MOUSE_DOWN: {
 			uint32 buttons = msg->FindInt32("buttons");
 			if (buttons & B_PRIMARY_MOUSE_BUTTON)
-				ADBMouseDown(0);
+				gADBInput->MouseDown(0);
 			if (buttons & B_SECONDARY_MOUSE_BUTTON)
-				ADBMouseDown(1);
+				gADBInput->MouseDown(1);
 			if (buttons & B_TERTIARY_MOUSE_BUTTON)
-				ADBMouseDown(2);
+				gADBInput->MouseDown(2);
 			return B_SKIP_MESSAGE;
 		}
 
 		case B_MOUSE_UP:	// B_MOUSE_UP means "all buttons released"
-			ADBMouseUp(0);
-			ADBMouseUp(1);
-			ADBMouseUp(2);
+			gADBInput->MouseUp(0);
+			gADBInput->MouseUp(1);
+			gADBInput->MouseUp(2);
 			return B_SKIP_MESSAGE;
 
 		default:

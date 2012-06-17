@@ -1703,7 +1703,7 @@ void sigusr2_handler(int sig, siginfo_t *sip, void *scp)
 				if (HasMacStarted()) {
 					if (InterruptFlags & INTFLAG_VIA) {
 						ClearInterruptFlag(INTFLAG_VIA);
-						ADBInterrupt();
+						gADBInput->Interrupt();
 						ExecuteNative(NATIVE_VIDEO_VBL);
 					}
 				}

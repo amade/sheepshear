@@ -29,7 +29,6 @@
 #include "xlowmem.h"
 #include "xpram.h"
 #include "timer.h"
-#include "adb.h"
 #include "sony.h"
 #include "disk.h"
 #include "cdrom.h"
@@ -66,6 +65,9 @@ static void sheepshaver_write_byte(uintptr adr, uint32 b)
 	WriteMacInt8(adr, b);
 }
 #endif
+
+
+ADBInput* gADBInput;
 
 
 /*
@@ -138,7 +140,7 @@ bool InitAll(const char *vmdir)
 	ExtFSInit(); 
 
 	// Init ADB
-	ADBInit();
+	gADBInput = new ADBInput();
 
 	// Init audio
 	AudioInit();
@@ -298,7 +300,7 @@ void ExitAll(void)
 	AudioExit();
 
 	// Exit ADB
-	ADBExit();
+	delete gADBInput;
 
 	// Exit video
 	VideoExit();

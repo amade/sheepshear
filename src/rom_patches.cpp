@@ -653,8 +653,8 @@ static void gen_bout_driver(uintptr addr)
 	Long(0x00000000); Long(0x00000000);
 };
 
-static const uint8 adbop_patch[] = {	// Call ADBOp() completion procedure
-										// The completion procedure may call ADBOp() again!
+static const uint8 adbop_patch[] = {	// Call ADBInput::Op() completion procedure
+										// The completion proc. may call ADBInput->Op() again!
 	0x40, 0xe7,				//	move	sr,-(sp)
 	0x00, 0x7c, 0x07, 0x00,	//	ori		#$0700,sr
 	M68K_EMUL_OP_ADBOP >> 8, M68K_EMUL_OP_ADBOP & 0xff,
@@ -2649,7 +2649,7 @@ static bool patch_68k(void)
 	}
 #endif
 
-	// Don't wait in ADBInit (via 0x36c)
+	// Don't wait in ADBInput::Init (via 0x36c)
 	static const uint8 adb_init_dat[] = {
 		0x08, 0x2b, 0x00, 0x05,
 		0x01, 0x5d, 0x66, 0xf8
@@ -2763,7 +2763,7 @@ static bool patch_68k(void)
 		*lp = htonl(FOURCC('x','s','r','d'));
 	}
 
-	// Replace ADBOp()
+	// Replace ADBInput::Op()
 	memcpy(ROMBaseHost + find_rom_trap(0xa07c), adbop_patch, sizeof(adbop_patch));
 
 	// Replace Time Manager

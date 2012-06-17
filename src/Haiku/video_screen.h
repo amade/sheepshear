@@ -19,8 +19,11 @@
  */
 
 
+#include "adb.h"
+
 #include <app/Message.h>
 #include <app/MessageFilter.h>
+
 
 static bool drawing_enable = false;	// This flag indicated if the access to the screen is allowed
 static int page_num;				// Index of the currently displayed buffer
@@ -86,7 +89,7 @@ MacScreen::MacScreen(const char *name, uint32 space) : BWindowScreen(name, space
 	quitting = false;
 	first = true;
 	drawing_enable = false;
-	ADBSetRelMouseMode(true);
+	gADBInput->SetRelMouseMode(true);
 
 	// Create view to poll the mouse
 	view = new BView (BRect(0,0,VModes[cur_mode].viXsize-1,VModes[cur_mode].viYsize-1),NULL,B_FOLLOW_NONE,0);
@@ -245,19 +248,19 @@ status_t MacScreen::tick_func(void *arg)
 				obj->view->GetMouse(&pt, &button);
 				obj->Unlock();
 				set_mouse_position(320, 240);
-				ADBMouseMoved(int(pt.x) - 320, int(pt.y) - 240);
+				gADBInput->MouseMoved(int(pt.x) - 320, int(pt.y) - 240);
 				if (button & B_PRIMARY_MOUSE_BUTTON)
-					ADBMouseDown(0);
+					gADBInput->MouseDown(0);
 				if (!(button & B_PRIMARY_MOUSE_BUTTON))
-					ADBMouseUp(0);
+					gADBInput->MouseUp(0);
 				if (button & B_SECONDARY_MOUSE_BUTTON)
-					ADBMouseDown(1);
+					gADBInput->MouseDown(1);
 				if (!(button & B_SECONDARY_MOUSE_BUTTON))
-					ADBMouseUp(1);
+					gADBInput->MouseUp(1);
 				if (button & B_TERTIARY_MOUSE_BUTTON)
-					ADBMouseDown(2);
+					gADBInput->MouseDown(2);
 				if (!(button & B_TERTIARY_MOUSE_BUTTON))
-					ADBMouseUp(2);
+					gADBInput->MouseUp(2);
 			}
 		}
 	}

@@ -1,7 +1,8 @@
 /*
  *  adb.h - ADB emulation (mouse/keyboard)
  *
- *  Basilisk II (C) 1997-2008 Christian Bauer
+ *  SheepShear, 2012 Alexander von Gluck
+ *  Rewritten from Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,24 +18,32 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef ADB_H
 #define ADB_H
 
-extern void ADBInit(void);
-extern void ADBExit(void);
 
-extern void ADBOp(uint8 op, uint8 *data);
+class ADBInput
+{
+public:
+							ADBInput();
+							~ADBInput();
 
-extern void ADBMouseMoved(int x, int y);
-extern void ADBMouseDown(int button);
-extern void ADBMouseUp(int button);
+			void			Init(void);
+			void			Exit(void);
 
-extern void ADBKeyDown(int code);
-extern void ADBKeyUp(int code);
+			void			Op(uint8 op, uint8 *data);
 
-extern void ADBInterrupt(void);
+			void			MouseMoved(int x, int y);
+			void			MouseDown(int button);
+			void			MouseUp(int button);
 
-extern void ADBSetRelMouseMode(bool relative);
+			void			KeyDown(int code);
+			void			KeyUp(int code);
+
+			void			Interrupt(void);
+
+			void			SetRelMouseMode(bool relative);
+};
+
 
 #endif

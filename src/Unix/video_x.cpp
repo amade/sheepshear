@@ -495,7 +495,7 @@ static bool open_window(int width, int height)
 	int aligned_height = (height + 15) & ~15;
 
 	// Set absolute mouse mode
-	ADBSetRelMouseMode(false);
+	gADBInput->SetRelMouseMode(false);
 
 	// Create window
 	XSetWindowAttributes wattr;
@@ -712,7 +712,7 @@ static bool open_fbdev_dga(int width, int height)
 	}
 
 	// Set absolute mouse mode
-	ADBSetRelMouseMode(false);
+	gADBInput->SetRelMouseMode(false);
 
 	// Create window
 	XSetWindowAttributes wattr;
@@ -794,7 +794,7 @@ static bool open_xf86_dga(int width, int height)
 
 #ifdef ENABLE_XF86_DGA
 	// Set relative mouse mode
-	ADBSetRelMouseMode(true);
+	gADBInput->SetRelMouseMode(true);
 
 	// Create window
 	XSetWindowAttributes wattr;
@@ -1730,7 +1730,7 @@ static void suspend_emul(void)
 {
 	if (display_type == DIS_SCREEN) {
 		// Release ctrl key
-		ADBKeyUp(0x36);
+		gADBInput->KeyUp(0x36);
 		ctrl_down = false;
 
 		// Lock frame buffer (this will stop the MacOS thread)
@@ -2016,8 +2016,8 @@ static void handle_events(void)
 			// Window "close" widget clicked
 			else if (XCheckTypedEvent(x_display, ClientMessage, &event)) {
 				if (event.xclient.format == 32 && event.xclient.data.l[0] == WM_DELETE_WINDOW) {
-					ADBKeyDown(0x7f);	// Power key
-					ADBKeyUp(0x7f);
+					gADBInput->KeyDown(0x7f);	// Power key
+					gADBInput->KeyUp(0x7f);
 				}
 			}
 
@@ -2031,17 +2031,17 @@ static void handle_events(void)
 			case ButtonPress: {
 				unsigned int button = ((XButtonEvent *)&event)->button;
 				if (button < 4)
-					ADBMouseDown(button - 1);
+					gADBInput->MouseDown(button - 1);
 				else if (button < 6) {	// Wheel mouse
 					if (mouse_wheel_mode == 0) {
 						int key = (button == 5) ? 0x79 : 0x74;	// Page up/down
-						ADBKeyDown(key);
-						ADBKeyUp(key);
+						gADBInput->KeyDown(key);
+						gADBInput->KeyUp(key);
 					} else {
 						int key = (button == 5) ? 0x3d : 0x3e;	// Cursor up/down
 						for(int i=0; i<mouse_wheel_lines; i++) {
-							ADBKeyDown(key);
-							ADBKeyUp(key);
+							gADBInput->KeyDown(key);
+							gADBInput->KeyUp(key);
 						}
 					}
 				}
@@ -2050,19 +2050,19 @@ static void handle_events(void)
 			case ButtonRelease: {
 				unsigned int button = ((XButtonEvent *)&event)->button;
 				if (button < 4)
-					ADBMouseUp(button - 1);
+					gADBInput->MouseUp(button - 1);
 				break;
 			}
 
 			// Mouse entered window
 			case EnterNotify:
 				if (event.xcrossing.mode != NotifyGrab && event.xcrossing.mode != NotifyUngrab)
-					ADBMouseMoved(event.xmotion.x, event.xmotion.y);
+					gADBInput->MouseMoved(event.xmotion.x, event.xmotion.y);
 				break;
 
 			// Mouse moved
 			case MotionNotify:
-				ADBMouseMoved(event.xmotion.x, event.xmotion.y);
+				gADBInput->MouseMoved(event.xmotion.x, event.xmotion.y);
 				break;
 
 			// Keyboard
@@ -2077,14 +2077,14 @@ static void handle_events(void)
 					if (!emul_suspended) {
 						if (code == 0x39) {	// Caps Lock pressed
 							if (caps_on) {
-								ADBKeyUp(code);
+								gADBInput->KeyUp(code);
 								caps_on = false;
 							} else {
-								ADBKeyDown(code);
+								gADBInput->KeyDown(code);
 								caps_on = true;
 							}
 						} else
-							ADBKeyDown(code);
+							gADBInput->KeyDown(code);
 						if (code == 0x36)
 							ctrl_down = true;
 					} else {
@@ -2102,7 +2102,7 @@ static void handle_events(void)
 				} else
 					code = event2keycode(event.xkey, false);
 				if (code >= 0 && code != 0x39) {	// Don't propagate Caps Lock releases
-					ADBKeyUp(code);
+					gADBInput->KeyUp(code);
 					if (code == 0x36)
 						ctrl_down = false;
 				}
