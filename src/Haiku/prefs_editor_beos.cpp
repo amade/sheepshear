@@ -67,7 +67,7 @@ const uint32 MSG_OK = 'okok';				// "Start" clicked
 const uint32 MSG_CANCEL = 'cncl';			// "Quit" clicked
 const uint32 MSG_ZAP_PRAM = 'zprm';
 
-const int NUM_PANES = 4;
+const int NUM_PANES = 5;
 
 const uint32 MSG_VOLUME_SELECTED = 'volu';	// "Volumes" pane
 const uint32 MSG_VOLUME_INVOKED = 'voli';
@@ -227,10 +227,11 @@ public:
 	virtual void MessageReceived(BMessage *msg);
 
 private:
-	BView *create_volumes_pane(void);
-	BView *create_graphics_pane(void);
-	BView *create_serial_pane(void);
-	BView *create_memory_pane(void);
+	BView *CreatePaneVolumes(void);
+	BView *CreatePaneGraphics(void);
+	BView *CreatePaneSerial(void);
+	BView *CreatePaneMemory(void);
+	BView *CreatePaneRom(void);
 
 	uint32 ok_message;
 	bool send_quit_on_close;
@@ -311,10 +312,11 @@ PrefsWindow::PrefsWindow(uint32 msg) : BWindow(BRect(0, 0, 475, 289), GetString(
 	top_frame = top->Bounds();
 
 	// Create panes
-	panes[0] = create_volumes_pane();
-	panes[1] = create_graphics_pane();
-	panes[2] = create_serial_pane();
-	panes[3] = create_memory_pane();
+	panes[0] = CreatePaneVolumes();
+	panes[1] = CreatePaneGraphics();
+	panes[2] = CreatePaneSerial();
+	panes[3] = CreatePaneMemory();
+	panes[4] = CreatePaneRom();
 
 	// Prefs item tab view
 	pane_tabs = new BTabView(BRect(10, 10, top_frame.right-10, top_frame.bottom-50), "items", B_WIDTH_FROM_LABEL);
@@ -385,7 +387,7 @@ PrefsWindow::~PrefsWindow()
  *  Create "Volumes" pane
  */
 
-BView *PrefsWindow::create_volumes_pane(void)
+BView *PrefsWindow::CreatePaneVolumes(void)
 {
 	BView *pane = new BView(BRect(0, 0, top_frame.right-20, top_frame.bottom-80), GetString(STR_VOLUMES_PANE_TITLE), B_FOLLOW_NONE, B_WILL_DRAW);
 	pane->SetViewColor(fill_color);
@@ -477,7 +479,7 @@ static video_mode_box screen_mode_boxes[NUM_SCREEN_MODES] = {
 	{B_32_BIT_1600x1200, STR_1600x1200_CTRL, STR_32_BIT_CTRL, 300, 167, NULL}
 };
 
-BView *PrefsWindow::create_graphics_pane(void)
+BView *PrefsWindow::CreatePaneGraphics(void)
 {
 	BView *pane = new BView(BRect(0, 0, top_frame.right-20, top_frame.bottom-80), GetString(STR_GRAPHICS_SOUND_PANE_TITLE), B_FOLLOW_NONE, B_WILL_DRAW);
 	pane->SetViewColor(fill_color);
@@ -587,7 +589,7 @@ static void set_serial_label(BPopUpMenu *menu, const char *prefs_name)
 			item->SetMarked(true);
 }
 
-BView *PrefsWindow::create_serial_pane(void)
+BView *PrefsWindow::CreatePaneSerial(void)
 {
 	BView *pane = new BView(BRect(0, 0, top_frame.right-20, top_frame.bottom-80), GetString(STR_SERIAL_NETWORK_PANE_TITLE), B_FOLLOW_NONE, B_WILL_DRAW);
 	pane->SetViewColor(fill_color);
@@ -617,10 +619,10 @@ BView *PrefsWindow::create_serial_pane(void)
 
 
 /*
- *  Create "Memory/Misc" pane
+ *  Create "Memory" pane
  */
 
-BView *PrefsWindow::create_memory_pane(void)
+BView *PrefsWindow::CreatePaneMemory(void)
 {
 	char str[256], str2[256];
 	BView *pane = new BView(BRect(0, 0, top_frame.right-20, top_frame.bottom-80), GetString(STR_MEMORY_MISC_PANE_TITLE), B_FOLLOW_NONE, B_WILL_DRAW);
@@ -656,11 +658,21 @@ BView *PrefsWindow::create_memory_pane(void)
 	pane->AddChild(idlewait_checkbox);
 	idlewait_checkbox->SetValue(PrefsFindBool("idlewait") ? B_CONTROL_ON : B_CONTROL_OFF);
 
+	return pane;
+}
+
+BView *PrefsWindow::CreatePaneRom(void)
+{
+	char str[256], str2[256];
+	BView *pane = new BView(BRect(0, 0, top_frame.right-20, top_frame.bottom-80), GetString(STR_ROM_PANE_TITLE), B_FOLLOW_NONE, B_WILL_DRAW);
+	pane->SetViewColor(fill_color);
+	float right = pane->Bounds().right-10;
+
 	rom_control = new PathControl(false, BRect(10, 100, right, 115), "rom", GetString(STR_ROM_FILE_CTRL), PrefsFindString("rom"), NULL);
 	rom_control->SetDivider(117);
 	pane->AddChild(rom_control);
-
 	return pane;
+
 }
 
 

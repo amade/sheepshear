@@ -150,7 +150,7 @@ user_string_def common_strings[] = {
 	{STR_NONET_CTRL, "Disable Ethernet"},
 	{STR_ETHERNET_IF_CTRL, "Ethernet Interface"},
 
-	{STR_MEMORY_MISC_PANE_TITLE, "Memory/Misc"},
+	{STR_MEMORY_MISC_PANE_TITLE, "Memory"},
 	{STR_RAMSIZE_CTRL, "MacOS RAM Size (MB)"},
 	{STR_RAMSIZE_4MB_LAB, "4"},
 	{STR_RAMSIZE_8MB_LAB, "8"},
@@ -165,6 +165,8 @@ user_string_def common_strings[] = {
 	{STR_RAMSIZE_FMT, "%d MB"},
 	{STR_IGNORESEGV_CTRL, "Ignore Illegal Memory Accesses"},
 	{STR_IDLEWAIT_CTRL, "Don't Use CPU When Idle"},
+
+	{STR_ROM_PANE_TITLE, "Bios"},
 	{STR_ROM_FILE_CTRL, "ROM File"},
 
 	{STR_JIT_PANE_TITLE, "JIT Compiler"},
