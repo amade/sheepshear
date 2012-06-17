@@ -464,7 +464,9 @@ void SheepShear::StartEmulator(void)
 
 	// Create area for DR Emulator
 	DREmulatorAddr = DR_EMULATOR_BASE;
-	dr_emulator_area = create_area(DR_EMULATOR_AREA_NAME, (void **)&DREmulatorAddr, B_EXACT_ADDRESS, DR_EMULATOR_SIZE, B_NO_LOCK, B_READ_AREA | B_WRITE_AREA);
+	#warning DR_EMULATOR base seems to be used on Haiku, we really shouldn't set memory locations statically bia B_EXACT_ADDRESS
+	// TODO: This will cause issues later
+	dr_emulator_area = create_area(DR_EMULATOR_AREA_NAME, (void **)&DREmulatorAddr, B_ANY_ADDRESS, DR_EMULATOR_SIZE, B_NO_LOCK, B_READ_AREA | B_WRITE_AREA);
 	if (dr_emulator_area < 0) {
 		sprintf(str, GetString(STR_NO_KERNEL_DATA_ERR), strerror(dr_emulator_area), dr_emulator_area);
 		ErrorAlert(str);
