@@ -7,14 +7,14 @@
 ## Application Specific Settings ---------------------------------------------
 
 # specify the name of the binary
-NAME= sheep
+NAME=sheep
 
 # specify the type of binary
 #	APP:	Application
 #	SHARED:	Shared library or add-on
 #	STATIC:	Static library archive
 #	DRIVER: Kernel Driver
-TYPE= DRIVER
+TYPE=DRIVER
 
 #	add support for new Pe and Eddie features
 #	to fill in generic makefile
@@ -30,7 +30,7 @@ TYPE= DRIVER
 #	if two source files with the same name (source.c or source.cpp)
 #	are included from different directories.  Also note that spaces
 #	in folder names do not work well with this makefile.
-SRCS= sheep_driver.c
+SRCS=sheep_driver.c
 
 #	specify the resource files to use
 #	full path or a relative path to the resource file can be used.
@@ -73,7 +73,7 @@ LOCAL_INCLUDE_PATHS =
 
 #	specify the level of optimization that you desire
 #	NONE, SOME, FULL
-OPTIMIZE= FULL
+OPTIMIZE=FULL
 
 #	specify any preprocessor symbols to be defined.  The symbols will not
 #	have their values set automatically; you must supply the value (if any)
@@ -86,32 +86,24 @@ DEFINES=
 #	if unspecified default warnings will be used
 #	NONE = supress all warnings
 #	ALL = enable all warnings
-WARNINGS = 
+WARNINGS= 
 
 #	specify whether image symbols will be created
 #	so that stack crawls in the debugger are meaningful
 #	if TRUE symbols will be created
-SYMBOLS = 
+SYMBOLS= 
 
 #	specify debug settings
 #	if TRUE will allow application to be run from a source-level
 #	debugger.  Note that this will disable all optimzation.
-DEBUGGER = 
+DEBUGGER= 
 
 #	specify additional compiler flags for all files
-COMPILER_FLAGS =
+COMPILER_FLAGS=
 
 #	specify additional linker flags
-LINKER_FLAGS =
+LINKER_FLAGS=
 
 
 ## include the makefile-engine
 include /boot/develop/etc/makefile-engine
-
-install: $(TARGET)
-	cp $(TARGET) /boot/home/config/add-ons/kernel/drivers/bin
-	ln -sf /boot/home/config/add-ons/kernel/drivers/bin/$(NAME) /boot/home/config/add-ons/kernel/drivers/dev/$(NAME)
-
-uninstall:
-	rm /boot/home/config/add-ons/kernel/drivers/bin/$(NAME)
-	rm /boot/home/config/add-ons/kernel/drivers/dev/$(NAME)

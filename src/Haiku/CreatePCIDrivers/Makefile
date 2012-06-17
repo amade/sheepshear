@@ -10,13 +10,13 @@ clean:
 	hexconv $< $@
 
 hexconv: hexconv.cpp
-	mwcc -o hexconv hexconv.cpp
+	$(CC) -o hexconv hexconv.cpp
 
 Ethernet.o: Ethernet.cpp
-	mwcc -I.. -I../../include -o $@ -c $<
+	$(CC) -I.. -I../../include -o $@ -c $<
 
 Video.o: Video.cpp
-	mwcc -I.. -I../../include -o $@ -c $<
+	$(CC) -I.. -I../../include -o $@ -c $<
 
 Ethernet: Ethernet.o
 	mwldppc -xms -export pragma -nostdentry -nostdlib -o $@ $<
