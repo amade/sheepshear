@@ -256,7 +256,7 @@ private:
 	BFilePanel *add_volume_panel;
 	BFilePanel *create_volume_panel;
 
-	uint32 max_ramsize;		// In MB
+	uint32 maxRamsize;		// In MB
 };
 
 
@@ -276,7 +276,7 @@ void PrefsEditor(uint32 msg)
  *  Preferences window constructor
  */
 
-PrefsWindow::PrefsWindow(uint32 msg) : BWindow(BRect(0, 0, 400, 289), GetString(STR_PREFS_TITLE), B_TITLED_WINDOW, B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS), this_messenger(this)
+PrefsWindow::PrefsWindow(uint32 msg) : BWindow(BRect(0, 0, 475, 289), GetString(STR_PREFS_TITLE), B_TITLED_WINDOW, B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS), this_messenger(this)
 {
 	int i;
 	ok_message = msg;
@@ -630,19 +630,21 @@ BView *PrefsWindow::create_memory_pane(void)
 	BEntry entry("/boot/var/swap");
 	off_t swap_space;
 	if (entry.GetSize(&swap_space) == B_NO_ERROR)
-		max_ramsize = swap_space / (1024 * 1024) - 8;
+		maxRamsize = swap_space / (1024 * 1024) - 8;
 	else {
 #warning TODO: Evaluate me SysInfo here!
-		//max_ramsize = SysInfo.max_pages * B_PAGE_SIZE / (1024 * 1024) - 8;
+		maxRamsize = 512;
+		//maxRamsize = SysInfo.max_pages * B_PAGE_SIZE / (1024 * 1024) - 8;
 	}
 
-	int32 value = PrefsFindInt32("ramsize") / (1024 * 1024);
+	int32 ramSize = PrefsFindInt32("ramsize") / (1024 * 1024);
 
-	ramsize_slider = new RAMSlider(BRect(10, 5, right, 55), "ramsize", GetString(STR_RAMSIZE_SLIDER), new BMessage(MSG_RAMSIZE), 8, max_ramsize, B_TRIANGLE_THUMB);
-	ramsize_slider->SetValue(value);
+	ramsize_slider = new RAMSlider(BRect(10, 5, right, 55), "ramsize",
+		GetString(STR_RAMSIZE_SLIDER), new BMessage(MSG_RAMSIZE), 8, maxRamsize, B_TRIANGLE_THUMB);
+	ramsize_slider->SetValue(ramSize);
 	ramsize_slider->UseFillColor(true, &slider_fill_color);
 	sprintf(str, GetString(STR_RAMSIZE_FMT), 8);
-	sprintf(str2, GetString(STR_RAMSIZE_FMT), max_ramsize);
+	sprintf(str2, GetString(STR_RAMSIZE_FMT), maxRamsize);
 	ramsize_slider->SetLimitLabels(str, str2);
 	pane->AddChild(ramsize_slider);
 
