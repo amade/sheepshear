@@ -22,6 +22,12 @@
 #define ADB_H
 
 
+#define KEY_BUFFER_SIZE 16
+#define KEY_STATE_SIZE 16
+
+#define MATRIX(code) (fKeyStates[code >> 3] & (1 << (~code & 7)))
+
+
 class ADBInput
 {
 public:
@@ -43,6 +49,27 @@ public:
 			void			Interrupt(void);
 
 			void			SetRelMouseMode(bool relative);
+private:
+			// Mouse state storage
+			bool			fMouseButton[3];
+			bool			fMouseOldButton[3];
+			bool			fMouseRelative;
+			int				fMouseCoordX;
+			int				fMouseCoordY;
+			int				fMouseOldCoordX;
+			int				fMouseOldCoordY;
+
+			// Keyboard state storage
+			uint8			fKeyboardType;
+			uint8			fKeyBuffer[KEY_BUFFER_SIZE];
+			uint8			fKeyStates[KEY_STATE_SIZE];
+			unsigned int	fKeyReadPtr;
+			unsigned int	fKeyWritePtr;
+
+			// Registers
+			uint8			fMouseRegister3[2];
+			uint8			fKeyRegister2[2];
+			uint8			fKeyRegister3[2];
 };
 
 
