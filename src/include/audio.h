@@ -45,11 +45,14 @@ public:
 			int16			InControl(uint32 pb, uint32 dce);
 			int16			InStatus(uint32 pb, uint32 dce);
 			int16			InClose(uint32 pb, uint32 dce);
+
+			bool			SetSampleRate(int index);
+			bool			SetSampleSize(int index);
+			bool			SetChannels(int index);
 private:
 			int32			GetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID);
 			int32			SetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID);
 };
-			
 
 
 extern bool AudioAvailable;		// Flag: audio output available (from the software point of view)

@@ -68,8 +68,8 @@ static pthread_attr_t stream_thread_attr;			// Streaming thread attributes
 static bool stream_thread_active = false;			// Flag: streaming thread installed
 static volatile bool stream_thread_cancel = false;	// Flag: cancel streaming thread
 
-// Prototypes
-static void *stream_func(void *arg);
+// Prototype hook
+static void *stream_hook(void *arg);
 
 
 /*
@@ -228,7 +228,9 @@ static bool open_esd(void)
 #endif
 }
 
-static bool open_audio(void)
+
+bool
+PlatformAudio::Open(void)
 {
 #ifdef ENABLE_ESD
 	// If ESPEAKER is set, the user probably wants to use ESD, so try that first
@@ -262,15 +264,17 @@ dev_opened:
 
 	// Start streaming thread
 	Set_pthread_attr(&stream_thread_attr, 0);
-	stream_thread_active = (pthread_create(&stream_thread, &stream_thread_attr, stream_func, NULL) == 0);
+	stream_thread_active = (pthread_create(&stream_thread,
+		&stream_thread_attr, stream_hook, NULL) == 0);
 
 	// Everything went fine
 	audio_open = true;
 	return true;
 }
 
+
 void
-PlartformAudio::PlatformInit(void)
+PlatformAudio::PlatformInit(void)
 {
 	// Init audio status (reasonable defaults) and feature flags
 	fAudioStatus.sample_rate = 44100 << 16;
@@ -296,7 +300,7 @@ PlartformAudio::PlatformInit(void)
 		printf("WARNING: Cannot open %s (%s)\n", mixer, strerror(errno));
 
 	// Open and initialize audio device
-	open_audio();
+	Open();
 }
 
 
@@ -304,7 +308,8 @@ PlartformAudio::PlatformInit(void)
  *  Deinitialization
  */
 
-static void close_audio(void)
+bool
+PlatformAudio::Close(void)
 {
 	// Stop stream and delete semaphore
 	if (stream_thread_active) {
@@ -323,7 +328,9 @@ static void close_audio(void)
 	}
 
 	audio_open = false;
+	return true;
 }
+
 
 void
 PlatformAudio::PlatformShutdown(void)
@@ -334,7 +341,7 @@ PlatformAudio::PlatformShutdown(void)
 		ioctl(audio_fd, SNDCTL_DSP_RESET, 0);
 
 	// Close audio device
-	close_audio();
+	Close();
 
 	// Delete semaphore
 	if (sem_inited) {
@@ -374,7 +381,15 @@ void audio_exit_stream()
  *  Streaming function
  */
 
-static void *stream_func(void *arg)
+static
+void *stream_hook(void *arg)
+{
+	gMacAudio->Stream(arg);
+}
+
+
+void
+PlatformAudio::Stream(void *arg)
 {
 	int16 *silent_buffer = new int16[sound_buffer_size / 2];
 	int16 *last_buffer = new int16[sound_buffer_size / 2];
@@ -427,7 +442,7 @@ silence:	write(audio_fd, silent_buffer, sound_buffer_size);
 	}
 	delete[] silent_buffer;
 	delete[] last_buffer;
-	return NULL;
+	return;
 }
 
 
@@ -453,34 +468,6 @@ PlatformAudio::PlatformInterrupt(void)
 	// Signal stream function
 	sem_post(&audio_irq_done_sem);
 	D(bug("AudioInterrupt done\n"));
-}
-
-
-/*
- *  Set sampling parameters
- *  "index" is an index into the audio_sample_rates[] etc. vectors
- *  It is guaranteed that fAudioStatus.num_sources == 0
- */
-
-bool audio_set_sample_rate(int index)
-{
-	close_audio();
-	audio_sample_rate_index = index;
-	return open_audio();
-}
-
-bool audio_set_sample_size(int index)
-{
-	close_audio();
-	audio_sample_size_index = index;
-	return open_audio();
-}
-
-bool audio_set_channels(int index)
-{
-	close_audio();
-	audio_channel_count_index = index;
-	return open_audio();
 }
 
 

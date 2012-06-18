@@ -35,11 +35,18 @@ public:
 		void				PlatformShutdown();
 		void				PlatformInterrupt();
 
-		void				PlayBuffer(void *arg, void *buf,
-			size_t size, const media_raw_audio_format &format);
+		bool				Open();
+		bool				Close();
+
+		void				PlayBuffer(void *arg, void *buf, size_t size,
+								const media_raw_audio_format &format);
 
 protected:
 		struct audio_status	fAudioStatus;
+		int                 fSampleRateIndex;
+		int                 fSampleSizeIndex;
+		int                 fChannelCountIndex;
+
 
 private:
 		void				SetFormat();

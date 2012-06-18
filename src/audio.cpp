@@ -86,6 +86,39 @@ MacAudio::Interrupt(void)
 
 
 /*
+ *  Set sampling parameters
+ *  "index" is an index into the audio_sample_rates[] etc. vectors
+ *  It is guaranteed that fAudioStatus.num_sources == 0
+ */
+
+bool
+MacAudio::SetSampleRate(int index)
+{
+	Close();
+	fSampleRateIndex = index;
+	return Open();
+}
+
+
+bool
+MacAudio::SetSampleSize(int index)
+{
+	Close();
+	fSampleSizeIndex = index;
+	return Open();
+}
+
+
+bool
+MacAudio::SetChannels(int index)
+{
+	Close();
+	fChannelCountIndex = index;
+	return Open();
+}
+
+
+/*
  *  Get audio info
  */
 int32
@@ -219,7 +252,7 @@ MacAudio::SetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID)
 				return noErr;
 			for (unsigned i=0; i<audio_sample_sizes.size(); i++)
 				if (audio_sample_sizes[i] == infoPtr) {
-					if (audio_set_sample_size(i))
+					if (SetSampleSize(i))
 						return noErr;
 					else
 						return siInvalidSampleSize;
@@ -234,7 +267,7 @@ MacAudio::SetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID)
 				return noErr;
 			for (unsigned i=0; i<audio_sample_rates.size(); i++)
 				if (audio_sample_rates[i] == infoPtr) {
-					if (audio_set_sample_rate(i))
+					if (SetSampleRate(i))
 						return noErr;
 					else
 						return siInvalidSampleRate;
@@ -249,7 +282,7 @@ MacAudio::SetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID)
 				return noErr;
 			for (unsigned i=0; i<audio_channel_counts.size(); i++)
 				if (audio_channel_counts[i] == infoPtr) {
-					if (audio_set_channels(i))
+					if (SetChannels(i))
 						return noErr;
 					else
 						return badChannel;

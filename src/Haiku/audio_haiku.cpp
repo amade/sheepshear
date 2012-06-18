@@ -155,7 +155,6 @@ PlatformAudio::PlatformInit(void)
 /*
  *  Deinitialization
  */
-
 void
 PlatformAudio::PlatformShutdown(void)
 {
@@ -176,6 +175,20 @@ PlatformAudio::PlatformShutdown(void)
 	// Delete semaphores
 	delete_sem(am_done_sem);
 	delete_sem(audio_irq_done_sem);
+}
+
+
+bool
+PlatformAudio::Open(void)
+{
+	return true;
+}
+
+
+bool
+PlatformAudio::Close(void)
+{
+	return true;
 }
 
 
@@ -268,28 +281,6 @@ PlatformAudio::PlatformInterrupt(void)
 	// Signal stream function
 	release_sem(audio_irq_done_sem);
 	D(bug("Interrupt done\n"));
-}
-
-
-/*
- *  Set sampling parameters
- *  "index" is an index into the audio_sample_rates[] etc. arrays
- *  It is guaranteed that fAudioStatus.num_sources == 0
- */
-
-bool audio_set_sample_rate(int index)
-{
-	return true;
-}
-
-bool audio_set_sample_size(int index)
-{
-	return true;
-}
-
-bool audio_set_channels(int index)
-{
-	return true;
 }
 
 

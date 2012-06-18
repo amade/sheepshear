@@ -31,10 +31,19 @@ public:
 		void				PlatformInit();
 		void				PlatformShutdown();
 		void				PlatformInterrupt();
+
+		bool				Open();
+		bool				Close();
+		void				Stream(void *arg);
+
 protected:
-        struct audio_status fAudioStatus;
+		struct audio_status fAudioStatus;
+		int					fSampleRateIndex;
+		int					fSampleSizeIndex;
+		int					fChannelCountIndex;
+
 private:
-        void                SetFormat();
+		void                SetFormat();
 };
 
 
