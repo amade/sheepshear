@@ -39,12 +39,6 @@
 #include "debug.h"
 
 
-// The currently selected audio parameters (indices in
-// audio_sample_rates[] etc. vectors)
-static int audio_sample_rate_index = 0;
-static int audio_sample_size_index = 0;
-static int audio_channel_count_index = 0;
-
 // Prototypes
 static OSXsoundOutput *soundOutput = NULL;
 static bool main_mute = false;
@@ -55,18 +49,18 @@ static bool speaker_mute = false;
  */
 static int audioInt(void);
 
-static bool open_audio(void)
+bool PlatformAudio::Open()
 {
-	AudioStatus.sample_rate = audio_sample_rates[audio_sample_rate_index];
-	AudioStatus.sample_size = audio_sample_sizes[audio_sample_size_index];
-	AudioStatus.channels = audio_channel_counts[audio_channel_count_index];
+	fAudioStatus.sample_rate = audio_sample_rates[fSampleRateIndex];
+	fAudioStatus.sample_size = audio_sample_sizes[fSampleSizeIndex];
+	fAudioStatus.channels = audio_channel_counts[fChannelCountIndex];
 
 	if (soundOutput)
 		delete soundOutput;
 
 	soundOutput = new OSXsoundOutput();
-	soundOutput->start(AudioStatus.sample_size, AudioStatus.channels, 
-					   AudioStatus.sample_rate >> 16);
+	soundOutput->start(fAudioStatus.sample_size, fAudioStatus.channels, 
+					   fAudioStatus.sample_rate >> 16);
 	soundOutput->setCallback(audioInt);
 	audio_frames_per_block = soundOutput->bufferSizeFrames();
 
@@ -92,12 +86,12 @@ PlatformAudio::PlatformInit(void)
 	audio_sample_rates.push_back(44100 << 16);
 
 	// Default to highest supported values
-	audio_sample_rate_index   = audio_sample_rates.size() - 1;
-	audio_sample_size_index   = audio_sample_sizes.size() - 1;
-	audio_channel_count_index = audio_channel_counts.size() - 1;
+	fSampleRateIndex = audio_sample_rates.size() - 1;
+	fSampleSizeInded = audio_sample_sizes.size() - 1;
+	fChannelCountIndex = audio_channel_counts.size() - 1;
 
-	AudioStatus.mixer = 0;
-	AudioStatus.num_sources = 0;
+	fAudioStatus.mixer = 0;
+	fAudioStatus.num_sources = 0;
 	audio_component_flags = cmpWantsRegisterMessage | kStereoOut | k16BitOut;
 	audio_component_flags = 0;
 
@@ -109,7 +103,8 @@ PlatformAudio::PlatformInit(void)
  *  Deinitialization
  */
 
-static void close_audio(void)
+void
+PlatformAudio::Close(void)
 {
 	D(bug("Closing Audio\n"));
 
@@ -126,7 +121,7 @@ void
 PlatformAudio::PlatformShutdown(void)
 {
 	// Close audio device
-	close_audio();
+	Close();
 }
 
 
@@ -163,7 +158,7 @@ PlatformAudio::PlatformInterrupt(void)
 	int16 *p;
 	M68kRegisters r;
 
-	if (!AudioStatus.mixer)
+	if (!fAudioStatus.mixer)
 	{
 		numSamples = 0;
 		soundOutput->sendAudioBuffer((void *)p, (int)numSamples);
@@ -173,7 +168,7 @@ PlatformAudio::PlatformInterrupt(void)
 
 	// Get data from apple mixer
 	r.a[0] = audio_data + adatStreamInfo;
-	r.a[1] = AudioStatus.mixer;
+	r.a[1] = fAudioStatus.mixer;
 	Execute68k(audio_data + adatGetSourceData, &r);
 	D(bug(" GetSourceData() returns %08lx\n", r.d[0]));
 
@@ -194,33 +189,6 @@ PlatformAudio::PlatformInterrupt(void)
 	D(bug("AudioInterrupt done\n"));
 }
 
-
-/*
- *  Set sampling parameters
- *  "index" is an index into the audio_sample_rates[] etc. vectors
- *  It is guaranteed that AudioStatus.num_sources == 0
- */
-
-bool audio_set_sample_rate(int index)
-{
-	close_audio();
-	audio_sample_rate_index = index;
-	return open_audio();
-}
-
-bool audio_set_sample_size(int index)
-{
-	close_audio();
-	audio_sample_size_index = index;
-	return open_audio();
-}
-
-bool audio_set_channels(int index)
-{
-	close_audio();
-	audio_channel_count_index = index;
-	return open_audio();
-}
 
 /*
  *  Get/set volume controls (volume values received/returned have the

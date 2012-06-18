@@ -1,0 +1,8 @@
+TODO Items for OSX!
+
+I've done the best I can for these, however without
+an OS X system I can't build to test :(
+
+Port log:
+ * include platform includes in ../include/platform/Darwin/
+ * audio_ functions are now a class named MacAudio and PlatformAudio
