@@ -75,15 +75,6 @@ static void *stream_func(void *arg);
 /*
  *  Initialization
  */
-
-// Set AudioStatus to reflect current audio stream format
-static void set_audio_status_format(void)
-{
-	AudioStatus.sample_rate = audio_sample_rates[audio_sample_rate_index];
-	AudioStatus.sample_size = audio_sample_sizes[audio_sample_size_index];
-	AudioStatus.channels = audio_channel_counts[audio_channel_count_index];
-}
-
 // Init using the dsp device, returns false on error
 static bool open_dsp(void)
 {
@@ -261,10 +252,13 @@ static bool open_audio(void)
 	WarningAlert(GetString(STR_NO_AUDIO_WARN));
 	return false;
 
-	// Device opened, set AudioStatus
+	// Device opened, set fAudioStatus
 dev_opened:
 	sound_buffer_size = (audio_sample_sizes[audio_sample_size_index] >> 3) * audio_channel_counts[audio_channel_count_index] * audio_frames_per_block;
-	set_audio_status_format();
+
+	fAudioStatus.sample_rate = audio_sample_rates[audio_sample_rate_index];
+	fAudioStatus.sample_size = audio_sample_sizes[audio_sample_size_index];
+	fAudioStatus.channels = audio_channel_counts[audio_channel_count_index];
 
 	// Start streaming thread
 	Set_pthread_attr(&stream_thread_attr, 0);
@@ -275,14 +269,15 @@ dev_opened:
 	return true;
 }
 
-void AudioInit(void)
+void
+PlartformAudio::PlatformInit(void)
 {
 	// Init audio status (reasonable defaults) and feature flags
-	AudioStatus.sample_rate = 44100 << 16;
-	AudioStatus.sample_size = 16;
-	AudioStatus.channels = 2;
-	AudioStatus.mixer = 0;
-	AudioStatus.num_sources = 0;
+	fAudioStatus.sample_rate = 44100 << 16;
+	fAudioStatus.sample_size = 16;
+	fAudioStatus.channels = 2;
+	fAudioStatus.mixer = 0;
+	fAudioStatus.num_sources = 0;
 	audio_component_flags = cmpWantsRegisterMessage | kStereoOut | k16BitOut;
 
 	// Sound disabled in prefs? Then do nothing
@@ -330,7 +325,8 @@ static void close_audio(void)
 	audio_open = false;
 }
 
-void AudioExit(void)
+void
+PlatformAudio::PlatformShutdown(void)
 {
 	// Stop the device immediately. Otherwise, close() sends
 	// SNDCTL_DSP_SYNC, which may hang
@@ -385,7 +381,7 @@ static void *stream_func(void *arg)
 	memset(silent_buffer, silence_byte, sound_buffer_size);
 
 	while (!stream_thread_cancel) {
-		if (AudioStatus.num_sources) {
+		if (fAudioStatus.num_sources) {
 
 			// Trigger audio interrupt to get new buffer
 			D(bug("stream: triggering irq\n"));
@@ -398,7 +394,7 @@ static void *stream_func(void *arg)
 			// Get size of audio data
 			uint32 apple_stream_info = ReadMacInt32(audio_data + adatStreamInfo);
 			if (apple_stream_info) {
-				int work_size = ReadMacInt32(apple_stream_info + scd_sampleCount) * (AudioStatus.sample_size >> 3) * AudioStatus.channels;
+				int work_size = ReadMacInt32(apple_stream_info + scd_sampleCount) * (fAudioStatus.sample_size >> 3) * fAudioStatus.channels;
 				D(bug("stream: work_size %d\n", work_size));
 				if (work_size > sound_buffer_size)
 					work_size = sound_buffer_size;
@@ -439,15 +435,16 @@ silence:	write(audio_fd, silent_buffer, sound_buffer_size);
  *  MacOS audio interrupt, read next data block
  */
 
-void AudioInterrupt(void)
+void
+PlatformAudio::PlatformInterrupt(void)
 {
 	D(bug("AudioInterrupt\n"));
 
 	// Get data from apple mixer
-	if (AudioStatus.mixer) {
+	if (fAudioStatus.mixer) {
 		M68kRegisters r;
 		r.a[0] = audio_data + adatStreamInfo;
-		r.a[1] = AudioStatus.mixer;
+		r.a[1] = fAudioStatus.mixer;
 		Execute68k(audio_data + adatGetSourceData, &r);
 		D(bug(" GetSourceData() returns %08lx\n", r.d[0]));
 	} else
@@ -462,7 +459,7 @@ void AudioInterrupt(void)
 /*
  *  Set sampling parameters
  *  "index" is an index into the audio_sample_rates[] etc. vectors
- *  It is guaranteed that AudioStatus.num_sources == 0
+ *  It is guaranteed that fAudioStatus.num_sources == 0
  */
 
 bool audio_set_sample_rate(int index)

@@ -74,7 +74,8 @@ static bool open_audio(void)
 	return true;
 }
 
-void AudioInit(void)
+void
+PlatformAudio::PlatformInit(void)
 {
 	// Sound disabled in prefs? Then do nothing
 	if (PrefsFindBool("nosound"))
@@ -121,7 +122,8 @@ static void close_audio(void)
 	audio_open = false;
 }
 
-void AudioExit(void)
+void
+PlatformAudio::PlatformShutdown(void)
 {
 	// Close audio device
 	close_audio();
@@ -152,7 +154,8 @@ void audio_exit_stream()
  *  MacOS audio interrupt, read next data block
  */
 
-void AudioInterrupt(void)
+void
+PlatformAudio::PlatformInterrupt(void)
 {
 	D(bug("AudioInterrupt\n"));
 	uint32 apple_stream_info;

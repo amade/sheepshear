@@ -17,32 +17,42 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef AUDIO_H
 #define AUDIO_H
 
+
 #include <vector>
+#include "platform_audio.h"
+
 
 #ifndef NO_STD_NAMESPACE
 using std::vector;
 #endif
 
-extern int32 AudioDispatch(uint32 params, uint32 ti);
+
+class MacAudio : public PlatformAudio
+{
+public:
+							MacAudio();
+							~MacAudio();
+
+			void			Reset();
+			void			Interrupt();
+			int32			Dispatch(uint32 params, uint32 ti);
+
+			int16			InOpen(uint32 pb, uint32 dce);
+			int16			InPrime(uint32 pb, uint32 dce);
+			int16			InControl(uint32 pb, uint32 dce);
+			int16			InStatus(uint32 pb, uint32 dce);
+			int16			InClose(uint32 pb, uint32 dce);
+private:
+			int32			GetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID);
+			int32			SetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID);
+};
+			
+
 
 extern bool AudioAvailable;		// Flag: audio output available (from the software point of view)
-
-extern int16 SoundInOpen(uint32 pb, uint32 dce);
-extern int16 SoundInPrime(uint32 pb, uint32 dce);
-extern int16 SoundInControl(uint32 pb, uint32 dce);
-extern int16 SoundInStatus(uint32 pb, uint32 dce);
-extern int16 SoundInClose(uint32 pb, uint32 dce);
-
-// System specific and internal functions/data
-extern void AudioInit(void);
-extern void AudioExit(void);
-extern void AudioReset(void);
-
-extern void AudioInterrupt(void);
 
 extern void audio_enter_stream(void);
 extern void audio_exit_stream(void);
@@ -60,14 +70,6 @@ extern void audio_set_main_volume(uint32 vol);
 extern void audio_set_speaker_mute(bool mute);
 extern void audio_set_speaker_volume(uint32 vol);
 
-// Current audio status
-struct audio_status {
-	uint32 sample_rate;		// 16.16 fixed point
-	uint32 sample_size;		// 8 or 16
-	uint32 channels;		// 1 (mono) or 2 (stereo)
-	uint32 mixer;			// Mac address of Apple Mixer
-	int num_sources;		// Number of active sources
-};
 extern struct audio_status AudioStatus;
 
 extern bool audio_open;					// Flag: audio is open and ready

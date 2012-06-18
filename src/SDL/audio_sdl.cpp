@@ -126,7 +126,8 @@ static bool open_audio(void)
 	return true;
 }
 
-void AudioInit(void)
+void
+PlatformAudio::PlatformInit(void)
 {
 	// Init audio status and feature flags
 	AudioStatus.sample_rate = 44100 << 16;
@@ -159,7 +160,8 @@ static void close_audio(void)
 	audio_open = false;
 }
 
-void AudioExit(void)
+void
+PlatformAudio::PlatformExit(void)
 {
 	// Close audio device
 	close_audio();
@@ -237,7 +239,8 @@ silence: memset(stream, silence_byte, stream_len);
  *  MacOS audio interrupt, read next data block
  */
 
-void AudioInterrupt(void)
+void
+PlatformAudio::PlatformInterrupt(void)
 {
 	D(bug("AudioInterrupt\n"));
 

@@ -31,7 +31,8 @@
  *  Initialization
  */
 
-void AudioInit(void)
+void
+PlatformAudio::PlatformInit(void)
 {
 	// Init audio status and feature flags
 	AudioStatus.sample_rate = 44100 << 16;
@@ -59,7 +60,8 @@ void AudioInit(void)
  *  Deinitialization
  */
 
-void AudioExit(void)
+void
+PlatformAudio::PlatformShutdown(void)
 {
 }
 
@@ -86,7 +88,8 @@ void audio_exit_stream()
  *  MacOS audio interrupt, read next data block
  */
 
-void AudioInterrupt(void)
+void
+PlatformAudio::PlatformInterrupt(void)
 {
 	D(bug("AudioInterrupt\n"));
 }

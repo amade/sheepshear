@@ -68,6 +68,7 @@ static void sheepshaver_write_byte(uintptr adr, uint32 b)
 
 
 ADBInput* gADBInput;
+MacAudio* gMacAudio;
 
 
 /*
@@ -143,7 +144,7 @@ bool InitAll(const char *vmdir)
 	gADBInput = new ADBInput();
 
 	// Init audio
-	AudioInit();
+	gMacAudio = new MacAudio();
 
 	// Init network
 	EtherInit();
@@ -297,7 +298,7 @@ void ExitAll(void)
 	EtherExit();
 
 	// Exit audio
-	AudioExit();
+	delete gMacAudio;
 
 	// Exit ADB
 	delete gADBInput;

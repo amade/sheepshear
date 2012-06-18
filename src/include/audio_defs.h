@@ -17,11 +17,20 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef AUDIO_DEFS_H
 #define AUDIO_DEFS_H
 
 #include "macos_util.h"
+
+
+// Current audio status
+struct audio_status {
+    uint32 sample_rate;     // 16.16 fixed point
+    uint32 sample_size;     // 8 or 16
+    uint32 channels;        // 1 (mono) or 2 (stereo)
+    uint32 mixer;           // Mac address of Apple Mixer
+    int num_sources;        // Number of active sources
+};
 
 
 // Error codes

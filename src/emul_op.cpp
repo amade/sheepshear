@@ -190,23 +190,23 @@ void EmulOp(M68kRegisters *r, uint32 pc, int selector)
 			break;
 
 		case OP_AUDIO_DISPATCH:		// Audio component functions
-			r->d[0] = AudioDispatch(r->a[3], r->a[4]);
+			r->d[0] = gMacAudio->Dispatch(r->a[3], r->a[4]);
 			break;
 
 		case OP_SOUNDIN_OPEN:		// Sound input driver functions
-			r->d[0] = SoundInOpen(r->a[0], r->a[1]);
+			r->d[0] = gMacAudio->InOpen(r->a[0], r->a[1]);
 			break;
 		case OP_SOUNDIN_PRIME:
-			r->d[0] = SoundInPrime(r->a[0], r->a[1]);
+			r->d[0] = gMacAudio->InPrime(r->a[0], r->a[1]);
 			break;
 		case OP_SOUNDIN_CONTROL:
-			r->d[0] = SoundInControl(r->a[0], r->a[1]);
+			r->d[0] = gMacAudio->InControl(r->a[0], r->a[1]);
 			break;
 		case OP_SOUNDIN_STATUS:
-			r->d[0] = SoundInStatus(r->a[0], r->a[1]);
+			r->d[0] = gMacAudio->InStatus(r->a[0], r->a[1]);
 			break;
 		case OP_SOUNDIN_CLOSE:
-			r->d[0] = SoundInClose(r->a[0], r->a[1]);
+			r->d[0] = gMacAudio->InClose(r->a[0], r->a[1]);
 			break;
 
 		case OP_ADBOP:				// ADBOp() replacement
@@ -280,7 +280,7 @@ void EmulOp(M68kRegisters *r, uint32 pc, int selector)
 			D(bug("*** RESET ***\n"));
 			TimerReset();
 			MacOSUtilReset();
-			AudioReset();
+			gMacAudio->Reset();
 
 			// Enable DR emulator (disabled for now)
 			if (PrefsFindBool("jit68k") && 0) {
@@ -330,7 +330,7 @@ void EmulOp(M68kRegisters *r, uint32 pc, int selector)
 				}
 				if (InterruptFlags & INTFLAG_AUDIO) {
 					ClearInterruptFlag(INTFLAG_AUDIO);
-					AudioInterrupt();
+					gMacAudio->Interrupt();
 				}
 				if (InterruptFlags & INTFLAG_ADB) {
 					ClearInterruptFlag(INTFLAG_ADB);

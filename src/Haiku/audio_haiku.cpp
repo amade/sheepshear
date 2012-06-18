@@ -1,5 +1,5 @@
 /*
- *  audio_beos.cpp - Audio support, BeOS implementation
+ *  audio_haiku.cpp - Audio support, Haiku implementation
  *
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *  Portions written by Marc Hellwig
@@ -22,7 +22,6 @@
 #include "sysdeps.h"
 
 #include <KernelKit.h>
-#include <MediaKit.h>
 
 #include "cpu_emulation.h"
 #include "main.h"
@@ -39,12 +38,9 @@
 static int audio_irq_done_sem = -1;	// Signal from interrupt to streaming thread: data block read
 static BSoundPlayer *the_player;
 
-// Prototypes
-static void playbuffer_func(void *arg, void *buf, size_t size, const media_raw_audio_format &format);
-
 
 /*
- *  Audio manager thread (for calling media kit functions;
+ *   manager thread (for calling media kit functions;
  *  this is not safe under R4 when running on the MacOS stack in kernel space)
  */
 
@@ -67,7 +63,7 @@ static status_t audio_manager(void *arg)
 		// Receive message
 		thread_id sender;
 		uint32 code = receive_data(&sender, NULL, 0);
-		D(bug("Audio manager received %08lx\n", code));
+		D(bug(" manager received %08lx\n", code));
 		switch (code) {
 			case MSG_QUIT_AUDIO_MANAGER:
 				return 0;
@@ -95,27 +91,29 @@ static status_t audio_manager(void *arg)
 }
 
 
+static void
+playbuffer_hook(void *arg, void *buf, size_t size, const media_raw_audio_format &format)
+{
+	// Hook function for BSoundPlayer
+	gMacAudio->PlayBuffer(arg, buf, size, format);
+}
+
+
 /*
  *  Initialization
  */
-
-// Set AudioStatus to reflect current audio stream format
-static void set_audio_status_format(void)
-{
-	AudioStatus.sample_rate = audio_sample_rates[0];
-	AudioStatus.sample_size = audio_sample_sizes[0];
-	AudioStatus.channels = audio_channel_counts[0];
-}
-
-void AudioInit(void)
+void
+PlatformAudio::PlatformInit(void)
 {
 	// Init audio status and feature flags
 	audio_sample_rates.push_back(44100 << 16);
 	audio_sample_sizes.push_back(16);
 	audio_channel_counts.push_back(2);
-	set_audio_status_format();
-	AudioStatus.mixer = 0;
-	AudioStatus.num_sources = 0;
+	fAudioStatus.sample_rate = audio_sample_rates[0];
+	fAudioStatus.sample_size = audio_sample_sizes[0];
+	fAudioStatus.channels = audio_channel_counts[0];
+	fAudioStatus.mixer = 0;
+	fAudioStatus.num_sources = 0;
 	audio_component_flags = cmpWantsRegisterMessage | kStereoOut | k16BitOut;
 
 	// Sound disabled in prefs? Then do nothing
@@ -123,24 +121,24 @@ void AudioInit(void)
 		return;
 
 	// Init semaphores
-	audio_irq_done_sem = create_sem(0, "Audio IRQ Done");
-	am_done_sem = create_sem(0, "Audio Manager Done");
+	audio_irq_done_sem = create_sem(0, " IRQ Done");
+	am_done_sem = create_sem(0, " Manager Done");
 
 	// Start audio manager thread
-	am_thread = spawn_thread(audio_manager, "Audio Manager", B_NORMAL_PRIORITY, NULL);
+	am_thread = spawn_thread(audio_manager, " Manager", B_NORMAL_PRIORITY, NULL);
 	resume_thread(am_thread);
 
 	// Start stream
 	media_raw_audio_format format;
-	format.frame_rate = AudioStatus.sample_rate >> 16;
-	format.channel_count = AudioStatus.channels;
+	format.frame_rate = fAudioStatus.sample_rate >> 16;
+	format.channel_count = fAudioStatus.channels;
 	format.format = media_raw_audio_format::B_AUDIO_SHORT;
 	format.byte_order = B_MEDIA_BIG_ENDIAN;
 	audio_frames_per_block = 4096;
-	size_t block_size = (AudioStatus.sample_size >> 3) * AudioStatus.channels * audio_frames_per_block;
-	D(bug("AudioInit: block size %d\n", block_size));
+	size_t block_size = (fAudioStatus.sample_size >> 3) * fAudioStatus.channels * audio_frames_per_block;
+	D(bug("Init: block size %d\n", block_size));
 	format.buffer_size = block_size;
-	the_player = new BSoundPlayer(&format, "MacOS Audio", playbuffer_func, NULL, NULL);
+	the_player = new BSoundPlayer(&format, "MacOS ", playbuffer_hook, NULL, NULL);
 	if (the_player->InitCheck() != B_NO_ERROR) {
 		printf("FATAL: Cannot initialize BSoundPlayer\n");
 		delete the_player;
@@ -158,7 +156,8 @@ void AudioInit(void)
  *  Deinitialization
  */
 
-void AudioExit(void)
+void
+PlatformAudio::PlatformShutdown(void)
 {
 	// Stop stream
 	if (the_player) {
@@ -208,7 +207,9 @@ void audio_exit_stream()
 
 static uint32 apple_stream_info;	// Mac address of SoundComponentData struct describing next buffer
 
-static void playbuffer_func(void *arg, void *buf, size_t size, const media_raw_audio_format &format)
+
+void
+PlatformAudio::PlayBuffer(void *arg, void *buf, size_t size, const media_raw_audio_format &format)
 {
 	// Check if new buffer is available
 	if (acquire_sem_etc(audio_irq_done_sem, 1, B_TIMEOUT, 0) == B_NO_ERROR) {
@@ -217,7 +218,7 @@ static void playbuffer_func(void *arg, void *buf, size_t size, const media_raw_a
 		D(bug("stream: new buffer present\n"));
 		uint32 apple_stream_info = ReadMacInt32(audio_data + adatStreamInfo);
 		if (apple_stream_info) {
-			size_t work_size = ReadMacInt32(apple_stream_info + scd_sampleCount) * (AudioStatus.sample_size >> 3) * AudioStatus.channels;
+			size_t work_size = ReadMacInt32(apple_stream_info + scd_sampleCount) * (fAudioStatus.sample_size >> 3) * fAudioStatus.channels;
 			D(bug("stream: size %d, work_size %d\n", size, work_size));
 			if (work_size > size)
 				work_size = size;
@@ -237,7 +238,7 @@ static void playbuffer_func(void *arg, void *buf, size_t size, const media_raw_a
 		memset(buf, 0, size);
 
 	// Trigger audio interrupt to get new buffer
-	if (AudioStatus.num_sources) {
+	if (fAudioStatus.num_sources) {
 		D(bug("stream: triggering irq\n"));
 		SetInterruptFlag(INTFLAG_AUDIO);
 		TriggerInterrupt();
@@ -249,15 +250,16 @@ static void playbuffer_func(void *arg, void *buf, size_t size, const media_raw_a
  *  MacOS audio interrupt, read next data block
  */
 
-void AudioInterrupt(void)
+void
+PlatformAudio::PlatformInterrupt(void)
 {
-	D(bug("AudioInterrupt\n"));
+	D(bug("Interrupt\n"));
 
 	// Get data from apple mixer
-	if (AudioStatus.mixer) {
+	if (fAudioStatus.mixer) {
 		M68kRegisters r;
 		r.a[0] = audio_data + adatStreamInfo;
-		r.a[1] = AudioStatus.mixer;
+		r.a[1] = fAudioStatus.mixer;
 		Execute68k(audio_data + adatGetSourceData, &r);
 		D(bug(" GetSourceData() returns %08lx\n", r.d[0]));
 	} else
@@ -265,14 +267,14 @@ void AudioInterrupt(void)
 
 	// Signal stream function
 	release_sem(audio_irq_done_sem);
-	D(bug("AudioInterrupt done\n"));
+	D(bug("Interrupt done\n"));
 }
 
 
 /*
  *  Set sampling parameters
  *  "index" is an index into the audio_sample_rates[] etc. arrays
- *  It is guaranteed that AudioStatus.num_sources == 0
+ *  It is guaranteed that fAudioStatus.num_sources == 0
  */
 
 bool audio_set_sample_rate(int index)

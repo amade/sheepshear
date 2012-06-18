@@ -22,10 +22,12 @@
 
 
 #include "adb.h"
+#include "audio.h"
 
 
 // Global variables
 extern ADBInput *gADBInput;		// ADB input driver
+extern MacAudio *gMacAudio;		// Mac audio driver
 extern void *TOC;				// TOC pointer
 extern void *R13;				// r13 register
 extern uint32 KernelDataAddr;	// Address of Kernel Data

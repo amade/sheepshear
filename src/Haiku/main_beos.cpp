@@ -64,6 +64,7 @@
 #include <time.h>
 
 #include "sysdeps.h"
+#include "audio.h"
 #include "main.h"
 #include "version.h"
 #include "prefs.h"

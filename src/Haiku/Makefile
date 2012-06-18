@@ -35,7 +35,7 @@ SRCS=../main.cpp main_beos.cpp ../prefs.cpp ../prefs_items.cpp prefs_beos.cpp \
     ../emul_op.cpp ../name_registry.cpp ../macos_util.cpp ../timer.cpp \
     timer_beos.cpp ../xpram.cpp xpram_beos.cpp ../adb.cpp clip_beos.cpp \
     ../sony.cpp ../disk.cpp ../cdrom.cpp ../scsi.cpp scsi_beos.cpp \
-    ../video.cpp video_beos.cpp ../audio.cpp audio_beos.cpp ../ether.cpp \
+    ../video.cpp video_beos.cpp ../audio.cpp audio_haiku.cpp ../ether.cpp \
     ether_beos.cpp ../serial.cpp serial_beos.cpp ../extfs.cpp extfs_beos.cpp \
     about_window_beos.cpp ../user_strings.cpp user_strings_beos.cpp ../thunks.cpp
 
@@ -76,7 +76,7 @@ SYSTEM_INCLUDE_PATHS=
 #	additional paths to look for local headers
 #	thes use the form: #include "header"
 #	source file directories are automatically included
-LOCAL_INCLUDE_PATHS= ../include ../kpx_cpu/src ../kpx_cpu/include SheepDriver SheepNet
+LOCAL_INCLUDE_PATHS= ../include ../include/platform/Haiku ../kpx_cpu/src ../kpx_cpu/include SheepDriver SheepNet
 
 #	specify the level of optimization that you desire
 #	NONE, SOME, FULL
