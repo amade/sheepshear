@@ -798,7 +798,6 @@ driver_window::driver_window(SDL_monitor_desc &m)
 	// Create cursor
 	if ((sdl_cursor = SDL_CreateCursor(MacCursor + 4, MacCursor + 36, 16, 16, 0, 0)) != NULL) {
 		SDL_SetCursor(sdl_cursor);
-		cursor_changed = false;
 	}
 #else
 	// Hide cursor
@@ -1538,6 +1537,8 @@ void SDL_monitor_desc::switch_to_current_mode(void)
 #ifdef SHEEPSHAVER
 bool video_can_change_cursor(void)
 {
+#if defined(__APPLE__)
+
 	static char driver[] = "Quartz?";
 	static int quartzok = -1;
 
@@ -1556,6 +1557,9 @@ bool video_can_change_cursor(void)
 	}
 
 	return quartzok;
+#else
+	return true;
+#endif
 }
 #endif
 
@@ -1567,7 +1571,25 @@ bool video_can_change_cursor(void)
 #ifdef SHEEPSHAVER
 void video_set_cursor(void)
 {
-	cursor_changed = true;
+	// Set new cursor image if it was changed
+	if (sdl_cursor) {
+		SDL_FreeCursor(sdl_cursor);
+		sdl_cursor = SDL_CreateCursor(MacCursor + 4, MacCursor + 36, 16, 16, MacCursor[2], MacCursor[3]);
+		if (sdl_cursor) {
+			SDL_ShowCursor(private_data == NULL || private_data->cursorVisible);
+			SDL_SetCursor(sdl_cursor);
+#ifdef WIN32
+			// XXX Windows apparently needs an extra mouse event to
+			// make the new cursor image visible
+			int visible = SDL_ShowCursor(-1);
+			if (visible) {
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				SDL_WarpMouse(x, y);
+			}
+#endif
+		}
+	}
 }
 #endif
 
@@ -2231,6 +2253,7 @@ static void VideoRefreshInit(void)
 	}
 }
 
+
 static inline void do_video_refresh(void)
 {
 	// Handle SDL events
@@ -2239,34 +2262,10 @@ static inline void do_video_refresh(void)
 	// Update display
 	video_refresh();
 
-#ifdef SHEEPSHAVER
-	// Set new cursor image if it was changed
-	if (cursor_changed && sdl_cursor) {
-		cursor_changed = false;
-		LOCK_EVENTS;
-		SDL_FreeCursor(sdl_cursor);
-		sdl_cursor = SDL_CreateCursor(MacCursor + 4, MacCursor + 36, 16, 16, MacCursor[2], MacCursor[3]);
-		if (sdl_cursor) {
-			SDL_ShowCursor(private_data == NULL || private_data->cursorVisible);
-			SDL_SetCursor(sdl_cursor);
-#ifdef WIN32
-			// XXX Windows apparently needs an extra mouse event to
-			// make the new cursor image visible
-			int visible = SDL_ShowCursor(-1);
-			if (visible) {
-				int x, y;
-				SDL_GetMouseState(&x, &y);
-				SDL_WarpMouse(x, y);
-			}
-#endif
-		}
-		UNLOCK_EVENTS;
-	}
-#endif
-
 	// Set new palette if it was changed
 	handle_palette_changes();
 }
+
 
 // This function is called on non-threaded platforms from a timer interrupt
 void VideoRefresh(void)
@@ -2280,8 +2279,10 @@ void VideoRefresh(void)
 	do_video_refresh();
 }
 
+
 const int VIDEO_REFRESH_HZ = 60;
 const int VIDEO_REFRESH_DELAY = 1000000 / VIDEO_REFRESH_HZ;
+
 
 #ifndef USE_CPU_EMUL_SERVICES
 static int redraw_func(void *arg)
