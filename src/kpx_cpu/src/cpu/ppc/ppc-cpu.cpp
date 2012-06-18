@@ -527,7 +527,7 @@ bool powerpc_cpu::check_spcflags()
 		spcflags().clear(SPCFLAG_CPU_ENTER_MON);
 #if ENABLE_MON
 		// Start up mon in real-mode
-		const char *arg[] = {
+		char *arg[] = {
 			"mon",
 #ifdef SHEEPSHAVER
 			"-m",
