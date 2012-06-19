@@ -2,7 +2,8 @@
  *  audio_macosx.cpp - Audio support, implementation Mac OS X
  *  Copyright (C) 2006, Daniel Sumorok
  *
- *  Basilisk II (C) 1997-2008 Christian Bauer
+ *  SheepShear, 2012 Alexander von Gluck
+ *  Rewritten from Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

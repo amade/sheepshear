@@ -1,7 +1,8 @@
 /*
  *  audio_haiku.cpp - Audio support, Haiku implementation
  *
- *  Basilisk II (C) 1997-2008 Christian Bauer
+ *  SheepShear, 2012 Alexander von Gluck IV
+ *  Rewritten from Basilisk II (C) 1997-2008 Christian Bauer
  *  Portions written by Marc Hellwig
  *
  *  This program is free software; you can redistribute it and/or modify
