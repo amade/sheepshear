@@ -1579,7 +1579,6 @@ AC_TRANSLATE_DEFINE(HAVE_LINKER_SCRIPT, "$ac_cv_linker_script_works",
 dnl Generate Makefile.
 AC_SUBST(PERL)
 AC_SUBST(USE_DYNGEN, [$ac_cv_use_dyngen])
-AC_SUBST(USE_SDL, [$ac_cv_use_sdl])
 AC_SUBST(DYNGENSRCS)
 AC_SUBST(DYNGEN_CC)
 AC_SUBST(DYNGEN_CFLAGS)
