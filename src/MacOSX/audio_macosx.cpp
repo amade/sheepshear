@@ -2,7 +2,7 @@
  *  audio_macosx.cpp - Audio support, implementation Mac OS X
  *  Copyright (C) 2006, Daniel Sumorok
  *
- *  SheepShear, 2012 Alexander von Gluck
+ *  SheepShear, 2012 Alexander von Gluck IV
  *  Rewritten from Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,6 +19,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 
 #include "sysdeps.h"
 
@@ -45,10 +46,12 @@ static OSXsoundOutput *soundOutput = NULL;
 static bool main_mute = false;
 static bool speaker_mute = false;
 
+
 /*
  *  Initialization
  */
 static int audioInt(void);
+
 
 bool
 PlatformAudio::DeviceOpen()
@@ -97,8 +100,6 @@ PlatformAudio::DeviceInit(void)
 	fAudioStatus.num_sources = 0;
 	audio_component_flags = cmpWantsRegisterMessage | kStereoOut | k16BitOut;
 	audio_component_flags = 0;
-
-	DeviceOpen();
 }
 
 
