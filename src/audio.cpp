@@ -43,25 +43,44 @@ vector<uint16> audio_sample_sizes;
 vector<uint16> audio_channel_counts;
 
 // Global variables
-struct audio_status fAudioStatus;	// Current audio status (sample rate etc.)
-bool audio_open = false;			// Flag: audio is initialized and ready
 int audio_frames_per_block;			// Number of audio frames per block
 uint32 audio_component_flags;		// Component feature flags
 uint32 audio_data = 0;				// Mac address of global data area
 static int open_count = 0;			// Open/close nesting count
 
-bool AudioAvailable = false;		// Flag: audio output available (from the software point of view)
-
 
 MacAudio::MacAudio()
 {
-	PlatformInit();
+	fAudioOpen = false;
+
+	DeviceInit();
+	Open();
 }
 
 
 MacAudio::~MacAudio()
 {
-	PlatformShutdown();
+	DeviceShutdown();
+}
+
+
+/*
+ *	Open audio device
+ */
+bool
+MacAudio::Open(void)
+{
+	return DeviceOpen();
+}
+
+
+/*
+ *	Close audio device
+ */
+bool
+MacAudio::Close(void)
+{
+	return DeviceClose();
 }
 
 
@@ -81,7 +100,7 @@ MacAudio::Reset(void)
 void
 MacAudio::Interrupt(void)
 {
-	PlatformInterrupt();
+	DeviceInterrupt();
 }
 
 
@@ -116,6 +135,17 @@ MacAudio::SetChannels(int index)
 	fChannelCountIndex = index;
 	return Open();
 }
+
+
+#if 0
+void
+MacAudio::SetFormat()
+{
+	fAudioStatus.sample_rate = audio_sample_rates[audio_sample_rate_index];
+	fAudioStatus.sample_size = audio_sample_sizes[audio_sample_size_index];
+	fAudioStatus.channels = audio_channel_counts[audio_channel_count_index];
+}
+#endif
 
 
 /*
@@ -446,7 +476,6 @@ MacAudio::Dispatch(uint32 params, uint32 globals)
 				if (p - audio_data != adatData)
 					goto adat_error;
 			}
-			AudioAvailable = true;
 			if (open_count == 0)
 				audio_enter_stream();
 			open_count++;
@@ -502,8 +531,10 @@ adat_error:	printf("FATAL: audio component data block initialization error\n");
 		// Sound component functions (not delegated)
 		case kSoundComponentInitOutputDeviceSelect:
 			D(bug(" InitOutputDevice\n"));
-			if (!audio_open)
+			if (!fAudioOpen) {
+				D(bug("%s: Audio device not open!\n", __func__));
 				return noHardwareErr;
+			}
 			if (fAudioStatus.mixer)
 				return noErr;
 

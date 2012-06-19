@@ -103,7 +103,7 @@ playbuffer_hook(void *arg, void *buf, size_t size, const media_raw_audio_format 
  *  Initialization
  */
 void
-PlatformAudio::PlatformInit(void)
+PlatformAudio::DeviceInit(void)
 {
 	// Init audio status and feature flags
 	audio_sample_rates.push_back(44100 << 16);
@@ -148,7 +148,7 @@ PlatformAudio::PlatformInit(void)
 		the_player->SetHasData(true);
 
 	// Everything OK
-	audio_open = true;
+	fAudioOpen = true;
 }
 
 
@@ -156,7 +156,7 @@ PlatformAudio::PlatformInit(void)
  *  Deinitialization
  */
 void
-PlatformAudio::PlatformShutdown(void)
+PlatformAudio::DeviceShutdown(void)
 {
 	// Stop stream
 	if (the_player) {
@@ -179,14 +179,17 @@ PlatformAudio::PlatformShutdown(void)
 
 
 bool
-PlatformAudio::Open(void)
+PlatformAudio::DeviceOpen(void)
 {
+	fAudioStatus.sample_rate = audio_sample_rates[fSampleRateIndex];
+	fAudioStatus.sample_size = audio_sample_sizes[fSampleSizeIndex];
+	fAudioStatus.channels = audio_channel_counts[fChannelCountIndex];
 	return true;
 }
 
 
 bool
-PlatformAudio::Close(void)
+PlatformAudio::DeviceClose(void)
 {
 	return true;
 }
@@ -264,7 +267,7 @@ PlatformAudio::PlayBuffer(void *arg, void *buf, size_t size, const media_raw_aud
  */
 
 void
-PlatformAudio::PlatformInterrupt(void)
+PlatformAudio::DeviceInterrupt(void)
 {
 	D(bug("Interrupt\n"));
 
@@ -287,15 +290,15 @@ PlatformAudio::PlatformInterrupt(void)
 /*
  *  Get/set audio info
  */
-
 bool audio_get_main_mute(void)
 {
 	return false;
 }
 
+
 uint32 audio_get_main_volume(void)
 {
-	if (audio_open) {
+	if (fAudioOpen) {
 		while (send_data(am_thread, MSG_GET_VOLUME, NULL, 0) == B_INTERRUPTED) ;
 		while (acquire_sem(am_done_sem) == B_INTERRUPTED) ;
 		return int(am_volume * 256.0) * 0x00010001;
@@ -303,32 +306,38 @@ uint32 audio_get_main_volume(void)
 		return 0x01000100;
 }
 
+
 bool audio_get_speaker_mute(void)
 {
 	return false;
 }
+
 
 uint32 audio_get_speaker_volume(void)
 {
 	return 0x01000100;
 }
 
+
 void audio_set_main_mute(bool mute)
 {
 }
 
+
 void audio_set_main_volume(uint32 vol)
 {
-	if (audio_open) {
+	if (fAudioOpen) {
 		am_volume = float((vol >> 16) + (vol & 0xffff)) / 512.0;
 		while (send_data(am_thread, MSG_SET_VOLUME, NULL, 0) == B_INTERRUPTED) ;
 		while (acquire_sem(am_done_sem) == B_INTERRUPTED) ;
 	}
 }
 
+
 void audio_set_speaker_mute(bool mute)
 {
 }
+
 
 void audio_set_speaker_volume(uint32 vol)
 {

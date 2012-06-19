@@ -31,25 +31,21 @@ class PlatformAudio
 {
 public:
 		// Required for PlatformAudio class
-		void				PlatformInit();
-		void				PlatformShutdown();
-		void				PlatformInterrupt();
-
-		bool				Open();
-		bool				Close();
+		void				DeviceInit();
+		void				DeviceShutdown();
+		void				DeviceInterrupt();
+		bool				DeviceOpen();
+		bool				DeviceClose();
 
 		void				PlayBuffer(void *arg, void *buf, size_t size,
 								const media_raw_audio_format &format);
 
 protected:
-		struct audio_status	fAudioStatus;
+		struct audio_status fAudioStatus;
+		bool				fAudioOpen;
 		int                 fSampleRateIndex;
 		int                 fSampleSizeIndex;
 		int                 fChannelCountIndex;
-
-
-private:
-		void				SetFormat();
 };
 
 

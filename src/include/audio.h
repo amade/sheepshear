@@ -36,6 +36,8 @@ public:
 							MacAudio();
 							~MacAudio();
 
+			bool			Open();
+			bool			Close();
 			void			Reset();
 			void			Interrupt();
 			int32			Dispatch(uint32 params, uint32 ti);
@@ -54,8 +56,6 @@ private:
 			int32			SetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID);
 };
 
-
-extern bool AudioAvailable;		// Flag: audio output available (from the software point of view)
 
 extern void audio_enter_stream(void);
 extern void audio_exit_stream(void);

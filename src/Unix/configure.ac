@@ -1529,6 +1529,12 @@ if [[ "x$WANT_JIT" = "xyes" ]]; then
   CPPFLAGS="$CPPFLAGS -DUSE_JIT"
 fi
 
+if [[ "x$WANT_SDL" = "xyes" ]]; then
+  CPPFLAGS="$CPPFLAGS -I../include/platform/SDL"
+else
+  CPPFLAGS="$CPPFLAGS -I../include/platform/Unix"
+fi
+
 dnl Higher level optimizations with MIPSPro compilers are possible
 if [[ "x$HAVE_IPA" = "xyes" ]]; then
   CFLAGS="`echo $CFLAGS | sed -e 's/-g//g'` -O3 -OPT:Olimit=0 -IPA"
@@ -1573,6 +1579,7 @@ AC_TRANSLATE_DEFINE(HAVE_LINKER_SCRIPT, "$ac_cv_linker_script_works",
 dnl Generate Makefile.
 AC_SUBST(PERL)
 AC_SUBST(USE_DYNGEN, [$ac_cv_use_dyngen])
+AC_SUBST(USE_SDL, [$ac_cv_use_sdl])
 AC_SUBST(DYNGENSRCS)
 AC_SUBST(DYNGEN_CC)
 AC_SUBST(DYNGEN_CFLAGS)

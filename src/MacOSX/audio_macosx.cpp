@@ -49,7 +49,8 @@ static bool speaker_mute = false;
  */
 static int audioInt(void);
 
-bool PlatformAudio::Open()
+bool
+PlatformAudio::DeviceOpen()
 {
 	fAudioStatus.sample_rate = audio_sample_rates[fSampleRateIndex];
 	fAudioStatus.sample_size = audio_sample_sizes[fSampleSizeIndex];
@@ -59,17 +60,18 @@ bool PlatformAudio::Open()
 		delete soundOutput;
 
 	soundOutput = new OSXsoundOutput();
-	soundOutput->start(fAudioStatus.sample_size, fAudioStatus.channels, 
-					   fAudioStatus.sample_rate >> 16);
+	soundOutput->start(fAudioStatus.sample_size, fAudioStatus.channels,
+		fAudioStatus.sample_rate >> 16);
 	soundOutput->setCallback(audioInt);
 	audio_frames_per_block = soundOutput->bufferSizeFrames();
 
-	audio_open = true;
+	fAudioOpen = true;
 	return true;
 }
 
+
 void
-PlatformAudio::PlatformInit(void)
+PlatformAudio::DeviceInit(void)
 {
 	// Sound disabled in prefs? Then do nothing
 	if (PrefsFindBool("nosound"))
@@ -80,7 +82,7 @@ PlatformAudio::PlatformInit(void)
 
 	audio_channel_counts.push_back(1);
 	audio_channel_counts.push_back(2);
-	
+
 	audio_sample_rates.push_back(11025 << 16);
 	audio_sample_rates.push_back(22050 << 16);
 	audio_sample_rates.push_back(44100 << 16);
@@ -95,16 +97,15 @@ PlatformAudio::PlatformInit(void)
 	audio_component_flags = cmpWantsRegisterMessage | kStereoOut | k16BitOut;
 	audio_component_flags = 0;
 
-	open_audio();
+	DeviceOpen();
 }
 
 
 /*
  *  Deinitialization
  */
-
 void
-PlatformAudio::Close(void)
+PlatformAudio::DeviceClose(void)
 {
 	D(bug("Closing Audio\n"));
 
@@ -113,22 +114,22 @@ PlatformAudio::Close(void)
 		delete soundOutput;
 		soundOutput = NULL;
 	}
-	
-	audio_open = false;
+
+	fAudioOpen = false;
 }
 
+
 void
-PlatformAudio::PlatformShutdown(void)
+PlatformAudio::DeviceShutdown(void)
 {
 	// Close audio device
-	Close();
+	DeviceClose();
 }
 
 
 /*
  *  First source added, start audio stream
  */
-
 void audio_enter_stream()
 {
 	// Streaming thread is always running to avoid clicking noises
@@ -138,7 +139,6 @@ void audio_enter_stream()
 /*
  *  Last source removed, stop audio stream
  */
-
 void audio_exit_stream()
 {
 	// Streaming thread is always running to avoid clicking noises
@@ -148,9 +148,8 @@ void audio_exit_stream()
 /*
  *  MacOS audio interrupt, read next data block
  */
-
 void
-PlatformAudio::PlatformInterrupt(void)
+PlatformAudio::DeviceInterrupt(void)
 {
 	D(bug("AudioInterrupt\n"));
 	uint32 apple_stream_info;
@@ -177,9 +176,7 @@ PlatformAudio::PlatformInterrupt(void)
 	{
 		numSamples = ReadMacInt32(apple_stream_info + scd_sampleCount);
 		p = (int16 *)Mac2HostAddr(ReadMacInt32(apple_stream_info + scd_buffer));
-	}
-	else
-	{
+	} else {
 		numSamples = 0;
 		p = NULL;
 	}
@@ -201,38 +198,48 @@ bool audio_get_main_mute(void)
 	return main_mute;
 }
 
+
 uint32 audio_get_main_volume(void)
 {
 	return 0x01000100;
 }
+
 
 bool audio_get_speaker_mute(void)
 {
 	return speaker_mute;
 }
 
+
 uint32 audio_get_speaker_volume(void)
 {
 	return 0x01000100;
 }
+
 
 void audio_set_main_mute(bool mute)
 {
 	main_mute = mute;
 }
 
+
 void audio_set_main_volume(uint32 vol)
 {
+
 }
+
 
 void audio_set_speaker_mute(bool mute)
 {
 	speaker_mute = mute;
 }
 
+
 void audio_set_speaker_volume(uint32 vol)
 {
+
 }
+
 
 static int audioInt(void)
 {

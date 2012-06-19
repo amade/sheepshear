@@ -30,9 +30,8 @@
 /*
  *  Initialization
  */
-
 void
-PlatformAudio::PlatformInit(void)
+PlatformAudio::DeviceInit(void)
 {
 	// Init audio status and feature flags
 	AudioStatus.sample_rate = 44100 << 16;
@@ -61,7 +60,7 @@ PlatformAudio::PlatformInit(void)
  */
 
 void
-PlatformAudio::PlatformShutdown(void)
+PlatformAudio::DeviceShutdown(void)
 {
 }
 
@@ -89,7 +88,7 @@ void audio_exit_stream()
  */
 
 void
-PlatformAudio::PlatformInterrupt(void)
+PlatformAudio::DeviceInterrupt(void)
 {
 	D(bug("AudioInterrupt\n"));
 }

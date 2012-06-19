@@ -49,11 +49,6 @@
 #include "debug.h"
 
 
-// The currently selected audio parameters (indices in audio_sample_rates[] etc. vectors)
-static int audio_sample_rate_index = 0;
-static int audio_sample_size_index = 0;
-static int audio_channel_count_index = 0;
-
 // Global variables
 static bool is_dsp_audio = false;					// Flag: is DSP audio
 static int audio_fd = -1;							// fd of dsp or ESD
@@ -73,10 +68,10 @@ static void *stream_hook(void *arg);
 
 
 /*
- *  Initialization
+ *  Attempt to open DSP device
  */
-// Init using the dsp device, returns false on error
-static bool open_dsp(void)
+bool
+PlatformAudio::DeviceOpenDSP(void)
 {
 	// Open the device
 	const char *dsp = PrefsFindString("dsp");
@@ -120,14 +115,14 @@ static bool open_dsp(void)
 			audio_sample_rates.push_back(rate << 16);
 
 		// Default to highest supported values
-		audio_sample_rate_index = audio_sample_rates.size() - 1;
-		audio_sample_size_index = audio_sample_sizes.size() - 1;
-		audio_channel_count_index = audio_channel_counts.size() - 1;
+		fSampleRateIndex = audio_sample_rates.size() - 1;
+		fSampleSizeIndex = audio_sample_sizes.size() - 1;
+		fChannelCountIndex = audio_channel_counts.size() - 1;
 	}
 
 	// Set DSP parameters
 	unsigned long format;
-	if (audio_sample_sizes[audio_sample_size_index] == 8) {
+	if (audio_sample_sizes[fSampleSizeIndex] == 8) {
 		format = AFMT_U8;
 		little_endian = false;
 		silence_byte = 0x80;
@@ -146,9 +141,9 @@ static bool open_dsp(void)
 	ioctl(audio_fd, SNDCTL_DSP_SETFMT, &format);
 	int frag = 0x0004000c;		// Block size: 4096 frames
 	ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &frag);
-	int stereo = (audio_channel_counts[audio_channel_count_index] == 2);
+	int stereo = (audio_channel_counts[fChannelCountIndex] == 2);
 	ioctl(audio_fd, SNDCTL_DSP_STEREO, &stereo);
-	int rate = audio_sample_rates[audio_sample_rate_index] >> 16;
+	int rate = audio_sample_rates[fSampleRateIndex] >> 16;
 	ioctl(audio_fd, SNDCTL_DSP_SPEED, &rate);
 
 	// Get sound buffer size
@@ -157,8 +152,10 @@ static bool open_dsp(void)
 	return true;
 }
 
+
 // Init using ESD, returns false on error
-static bool open_esd(void)
+bool
+PlatformAudio::DeviceOpenESD(void)
 {
 #ifdef ENABLE_ESD
 	int rate;
@@ -214,9 +211,9 @@ static bool open_esd(void)
 		audio_channel_counts.push_back(2);
 
 		// Default to highest supported values
-		audio_sample_rate_index = audio_sample_rates.size() - 1;
-		audio_sample_size_index = audio_sample_sizes.size() - 1;
-		audio_channel_count_index = audio_channel_counts.size() - 1;
+		fSampleRateIndex = audio_sample_rates.size() - 1;
+		fSampleSizeIndex = audio_sample_sizes.size() - 1;
+		fChannelCountIndex = audio_channel_counts.size() - 1;
 	}
 
 	// Sound buffer size = 4096 frames
@@ -230,37 +227,42 @@ static bool open_esd(void)
 
 
 bool
-PlatformAudio::Open(void)
+PlatformAudio::DeviceOpen(void)
 {
+	bool connected = false;
+
 #ifdef ENABLE_ESD
 	// If ESPEAKER is set, the user probably wants to use ESD, so try that first
 	if (getenv("ESPEAKER"))
-		if (open_esd())
-			goto dev_opened;
+		if (DeviceOpenESD())
+			connected = true;
 #endif
 
 	// Try to open dsp
-	if (open_dsp())
-		goto dev_opened;
+	if (DeviceOpenDSP())
+		connected = true;
 
 #ifdef ENABLE_ESD
 	// Hm, dsp failed so we try ESD again if ESPEAKER wasn't set
 	if (!getenv("ESPEAKER"))
-		if (open_esd())
-			goto dev_opened;
+		if (DeviceOpenESD())
+			connected = true;
 #endif
 
-	// No audio device succeeded
-	WarningAlert(GetString(STR_NO_AUDIO_WARN));
-	return false;
+	if (!connected) {
+		// No audio device succeeded
+		WarningAlert(GetString(STR_NO_AUDIO_WARN));
+		return false;
+	}
 
 	// Device opened, set fAudioStatus
-dev_opened:
-	sound_buffer_size = (audio_sample_sizes[audio_sample_size_index] >> 3) * audio_channel_counts[audio_channel_count_index] * audio_frames_per_block;
+	sound_buffer_size = (audio_sample_sizes[fSampleSizeIndex] >> 3)
+		* audio_channel_counts[fChannelCountIndex]
+		* audio_frames_per_block;
 
-	fAudioStatus.sample_rate = audio_sample_rates[audio_sample_rate_index];
-	fAudioStatus.sample_size = audio_sample_sizes[audio_sample_size_index];
-	fAudioStatus.channels = audio_channel_counts[audio_channel_count_index];
+	fAudioStatus.sample_rate = audio_sample_rates[fSampleRateIndex];
+	fAudioStatus.sample_size = audio_sample_sizes[fSampleSizeIndex];
+	fAudioStatus.channels = audio_channel_counts[fChannelCountIndex];
 
 	// Start streaming thread
 	Set_pthread_attr(&stream_thread_attr, 0);
@@ -268,13 +270,14 @@ dev_opened:
 		&stream_thread_attr, stream_hook, NULL) == 0);
 
 	// Everything went fine
-	audio_open = true;
-	return true;
+	fAudioOpen = true;
+
+	return fAudioOpen;
 }
 
 
 void
-PlatformAudio::PlatformInit(void)
+PlatformAudio::DeviceInit(void)
 {
 	// Init audio status (reasonable defaults) and feature flags
 	fAudioStatus.sample_rate = 44100 << 16;
@@ -298,9 +301,6 @@ PlatformAudio::PlatformInit(void)
 	mixer_fd = open(mixer, O_RDWR);
 	if (mixer_fd < 0)
 		printf("WARNING: Cannot open %s (%s)\n", mixer, strerror(errno));
-
-	// Open and initialize audio device
-	Open();
 }
 
 
@@ -309,7 +309,7 @@ PlatformAudio::PlatformInit(void)
  */
 
 bool
-PlatformAudio::Close(void)
+PlatformAudio::DeviceClose(void)
 {
 	// Stop stream and delete semaphore
 	if (stream_thread_active) {
@@ -327,13 +327,13 @@ PlatformAudio::Close(void)
 		audio_fd = -1;
 	}
 
-	audio_open = false;
+	fAudioOpen = false;
 	return true;
 }
 
 
 void
-PlatformAudio::PlatformShutdown(void)
+PlatformAudio::DeviceShutdown(void)
 {
 	// Stop the device immediately. Otherwise, close() sends
 	// SNDCTL_DSP_SYNC, which may hang
@@ -341,7 +341,7 @@ PlatformAudio::PlatformShutdown(void)
 		ioctl(audio_fd, SNDCTL_DSP_RESET, 0);
 
 	// Close audio device
-	Close();
+	DeviceClose();
 
 	// Delete semaphore
 	if (sem_inited) {
@@ -451,7 +451,7 @@ silence:	write(audio_fd, silent_buffer, sound_buffer_size);
  */
 
 void
-PlatformAudio::PlatformInterrupt(void)
+PlatformAudio::DeviceInterrupt(void)
 {
 	D(bug("AudioInterrupt\n"));
 
