@@ -13,14 +13,16 @@ SheepShear was created as a fork of the SheepShaver codebase
 Targeted Platforms:
  * Haiku
  * Linux
- * MacOS ?
+ * MacOS X
+   - MacOS X moved to clang in recent versions. The old qemu
+     dyngen engine we use doesn't play nicely with clang :(
  * Windows ?
 
 -----------------------------
 TODO Items:
+ * Refactor code base, clean up extern functions to classes
  * Better GUI
  * Better Icons
- * Patches from other SheepShaver branches applied
  * Easier to use
 
 -----------------------------
