@@ -41,6 +41,15 @@ public:
 								const media_raw_audio_format &format);
 
 protected:
+		bool				GetMainMute();
+		void				SetMainMute(bool mute);
+		uint32				GetMainVolume();
+		void				SetMainVolume(uint32 vol);
+		bool				GetSpeakerMute();
+		void				SetSpeakerMute(bool mute);
+		uint32				GetSpeakerVolume();
+		void				SetSpeakerVolume(uint32 vol);
+
 		struct audio_status fAudioStatus;
 		bool				fAudioOpen;
 		int                 fSampleRateIndex;

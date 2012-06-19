@@ -20,6 +20,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 #include "sysdeps.h"
 
 #include <KernelKit.h>
@@ -291,13 +292,21 @@ PlatformAudio::DeviceInterrupt(void)
 /*
  *  Get/set audio info
  */
-bool audio_get_main_mute(void)
+bool
+PlatformAudio::GetMainMute(void)
 {
 	return false;
 }
 
 
-uint32 audio_get_main_volume(void)
+void
+PlatformAudio::SetMainMute(bool mute)
+{
+}
+
+
+uint32
+PlatformAudio::GetMainVolume(void)
 {
 	if (fAudioOpen) {
 		while (send_data(am_thread, MSG_GET_VOLUME, NULL, 0) == B_INTERRUPTED) ;
@@ -308,24 +317,8 @@ uint32 audio_get_main_volume(void)
 }
 
 
-bool audio_get_speaker_mute(void)
-{
-	return false;
-}
-
-
-uint32 audio_get_speaker_volume(void)
-{
-	return 0x01000100;
-}
-
-
-void audio_set_main_mute(bool mute)
-{
-}
-
-
-void audio_set_main_volume(uint32 vol)
+void
+PlatformAudio::SetMainVolume(uint32 vol)
 {
 	if (fAudioOpen) {
 		am_volume = float((vol >> 16) + (vol & 0xffff)) / 512.0;
@@ -335,11 +328,29 @@ void audio_set_main_volume(uint32 vol)
 }
 
 
-void audio_set_speaker_mute(bool mute)
+bool
+PlatformAudio::GetSpeakerMute(void)
 {
+	return false;
 }
 
 
-void audio_set_speaker_volume(uint32 vol)
+void
+PlatformAudio::SetSpeakerMute(bool mute)
 {
+
+}
+
+
+uint32
+PlatformAudio::GetSpeakerVolume(void)
+{
+	return 0x01000100;
+}
+
+
+void
+PlatformAudio::SetSpeakerVolume(uint32 vol)
+{
+
 }

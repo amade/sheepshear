@@ -73,10 +73,8 @@
 # define PPC_PROFILE_GENERIC_CALLS 0
 # define PPC_PROFILE_REGS_USE 0
 # define PPC_ENABLE_FPU_EXCEPTIONS 0
+# define PPC_ENABLE_JIT 1
 # define KPX_MAX_CPUS 1
-# if ENABLE_DYNGEN
-#  define PPC_ENABLE_JIT 1
-# endif
 # if defined(__i386__) || defined(__x86_64__)
 #  define DYNGEN_ASM_OPTS 1
 # endif

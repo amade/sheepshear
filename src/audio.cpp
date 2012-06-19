@@ -137,17 +137,6 @@ MacAudio::SetChannels(int index)
 }
 
 
-#if 0
-void
-MacAudio::SetFormat()
-{
-	fAudioStatus.sample_rate = audio_sample_rates[audio_sample_rate_index];
-	fAudioStatus.sample_size = audio_sample_sizes[audio_sample_size_index];
-	fAudioStatus.channels = audio_channel_counts[audio_channel_count_index];
-}
-#endif
-
-
 /*
  *  Get audio info
  */
@@ -213,19 +202,19 @@ MacAudio::GetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID)
 		}
 
 		case siSpeakerMute:
-			WriteMacInt16(infoPtr, audio_get_speaker_mute());
+			WriteMacInt16(infoPtr, GetSpeakerMute());
 			break;
 
 		case siSpeakerVolume:
-			WriteMacInt32(infoPtr, audio_get_speaker_volume());
+			WriteMacInt32(infoPtr, GetSpeakerVolume());
 			break;
 
 		case siHardwareMute:
-			WriteMacInt16(infoPtr, audio_get_main_mute());
+			WriteMacInt16(infoPtr, GetMainMute());
 			break;
 
 		case siHardwareVolume:
-			WriteMacInt32(infoPtr, audio_get_main_volume());
+			WriteMacInt32(infoPtr, GetMainVolume());
 			break;
 
 		case siHardwareVolumeSteps:
@@ -320,21 +309,21 @@ MacAudio::SetInfo(uint32 infoPtr, uint32 selector, uint32 sourceID)
 			return badChannel;
 
 		case siSpeakerMute:
-			audio_set_speaker_mute((uint16)infoPtr);
+			SetSpeakerMute((uint16)infoPtr);
 			break;
 
 		case siSpeakerVolume:
 			D(bug("  set speaker volume %08lx\n", infoPtr));
-			audio_set_speaker_volume(infoPtr);
+			SetSpeakerVolume(infoPtr);
 			break;
 
 		case siHardwareMute:
-			audio_set_main_mute((uint16)infoPtr);
+			SetMainMute((uint16)infoPtr);
 			break;
 
 		case siHardwareVolume:
 			D(bug("  set hardware volume %08lx\n", infoPtr));
-			audio_set_main_volume(infoPtr);
+			SetMainVolume(infoPtr);
 			break;
 
 		default:	// Delegate to Apple Mixer
