@@ -1,7 +1,8 @@
 /*
  *  sysdeps.h - System dependent definitions for BeOS
  *
- *  SheepShaver (C) 1997-2008 Christian Bauer and Marc Hellwig
+ *  SheepShear, 2012 Alexander von Gluck IV
+ *  Rewritten from SheepShaver (C) 1997-2008 Christian Bauer and Marc Hellwig
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,7 +18,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef SYSDEPS_H
 #define SYSDEPS_H
 
@@ -36,21 +36,22 @@
 
 #include "user_strings_beos.h"
 
+
 // Are we using a PPC emulator or the real thing?
 #ifdef __POWERPC__
-#define EMULATED_PPC 0
-#define WORDS_BIGENDIAN 1
-#define SYSTEM_CLOBBERS_R2 1
-#define REAL_ADDRESSING 1
+# define EMULATED_PPC 0
+# define WORDS_BIGENDIAN 1
+# define SYSTEM_CLOBBERS_R2 1
+# define REAL_ADDRESSING 1
 #else
 // Not PowerPC
-#define EMULATED_PPC 1
-#undef  WORDS_BIGENDIAN
-#ifdef NATMEM_OFFSET
-#define DIRECT_ADDRESSING 1
-#else
-#define REAL_ADDRESSING 1
-#endif
+# define EMULATED_PPC 1
+# undef  WORDS_BIGENDIAN
+# ifdef NATMEM_OFFSET
+#  define DIRECT_ADDRESSING 1
+# else
+# define REAL_ADDRESSING 1
+# endif
 #endif
 
 // Define for external components
@@ -62,10 +63,35 @@
 
 #define POWERPC_ROM 1
 
+#if EMULATED_PPC
+// Configure PowerPC emulator
+# define PPC_REENTRANT_JIT 1
+# define PPC_CHECK_INTERRUPTS 1
+# define PPC_DECODE_CACHE 1
+# define PPC_FLIGHT_RECORDER 1
+# define PPC_PROFILE_COMPILE_TIME 0
+# define PPC_PROFILE_GENERIC_CALLS 0
+# define PPC_PROFILE_REGS_USE 0
+# define PPC_ENABLE_FPU_EXCEPTIONS 0
+# define KPX_MAX_CPUS 1
+# if ENABLE_DYNGEN
+#  define PPC_ENABLE_JIT 1
+# endif
+# if defined(__i386__) || defined(__x86_64__)
+#  define DYNGEN_ASM_OPTS 1
+# endif
+#else
+// Native PowerPC machine
+# define ROM_IS_WRITE_PROTECTED 1
+# define USE_SCRATCHMEM_SUBTERFUGE 0
+# define PPC_ENABLE_JIT 0
+#endif
+
 // Byte swap functions
 #define bswap_16 B_SWAP_INT16
 #define bswap_32 B_SWAP_INT32
 #define bswap_64 B_SWAP_INT64
+
 
 // Time data type for Time Manager emulation
 typedef bigtime_t tm_time_t;

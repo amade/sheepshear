@@ -1,6 +1,7 @@
 /*
  *  sysdeps.h - System dependent definitions for Linux
  *
+ *  SheepShear, 2012 Alexander von Gluck IV
  *  SheepShaver (C) 1997-2008 Christian Bauer and Marc Hellwig
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -114,6 +115,7 @@
 #define PPC_PROFILE_COMPILE_TIME 0
 #define PPC_PROFILE_GENERIC_CALLS 0
 #define PPC_PROFILE_REGS_USE 0
+#define PPC_ENABLE_FPU_EXCEPTIONS 0
 #define KPX_MAX_CPUS 1
 #if ENABLE_DYNGEN
 #define PPC_ENABLE_JIT 1
