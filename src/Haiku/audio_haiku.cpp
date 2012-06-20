@@ -149,6 +149,11 @@ PlatformAudio::DeviceInit(void)
 	} else
 		the_player->SetHasData(true);
 
+	// Default to highest supported values
+	fSampleRateIndex = audio_sample_rates.size() - 1;
+	fSampleSizeIndex = audio_sample_sizes.size() - 1;
+	fChannelCountIndex = audio_channel_counts.size() - 1;
+
 	// Everything OK
 	fAudioOpen = true;
 }
