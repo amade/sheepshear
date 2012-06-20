@@ -17,8 +17,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #include "sysdeps.h"
+
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -35,16 +35,15 @@ const char XPRAM_FILE_NAME[] = "SheepShaver_nvram.dat";
 #else
 const char XPRAM_FILE_NAME[] = "BasiliskII_xpram.dat";
 #endif
-static string xpram_path;
 
 
 /*
  *  Construct XPRAM path
  */
 
-static void build_xpram_path(void)
+static void build_xpram_path(string *xpram_path)
 {
-	xpram_path.clear();
+	xpram_path->clear();
 	int pwd_len = GetCurrentDirectory(0, NULL);
 	char *pwd = new char[pwd_len];
 	if (GetCurrentDirectory(pwd_len, pwd) == pwd_len - 1)
@@ -57,11 +56,12 @@ static void build_xpram_path(void)
 /*
  *  Load XPRAM from settings file
  */
-
-void LoadXPRAM(const char *vmdir)
+void
+MacPRAM::Load()
 {
 	// Construct XPRAM path
-	build_xpram_path();
+	string xpram_path;
+	build_xpram_path(&xpram_path);
 
 	// Load XPRAM from settings file
 	HANDLE fh = CreateFile(xpram_path.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -77,8 +77,13 @@ void LoadXPRAM(const char *vmdir)
  *  Save XPRAM to settings file
  */
 
-void SaveXPRAM(void)
+void
+MacPRAM::Save(void)
 {
+	// Construct XPRAM path
+	string xpram_path;
+	build_xpram_path(&xpram_path);
+
 	HANDLE fh = CreateFile(xpram_path.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (fh != INVALID_HANDLE_VALUE) {
 		DWORD bytesWritten;
@@ -92,10 +97,12 @@ void SaveXPRAM(void)
  *  Delete PRAM file
  */
 
-void ZapPRAM(void)
+void
+MacPRAM::Zap(void)
 {
-	// Construct PRAM path
-	build_xpram_path();
+	// Construct XPRAM path
+	string xpram_path;
+	build_xpram_path(&xpram_path);
 
 	// Delete file
 	DeleteFile(xpram_path.c_str());
