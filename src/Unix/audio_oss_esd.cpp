@@ -408,9 +408,12 @@ PlatformAudio::Stream(void *arg)
 			D(bug("stream: ack received\n"));
 
 			// Get size of audio data
-			uint32 apple_stream_info = ReadMacInt32(audio_data + adatStreamInfo);
+			uint32 apple_stream_info
+				= ReadMacInt32(audio_data + adatStreamInfo);
 			if (apple_stream_info) {
-				int work_size = ReadMacInt32(apple_stream_info + scd_sampleCount) * (fAudioStatus.sample_size >> 3) * fAudioStatus.channels;
+				int work_size = ReadMacInt32(apple_stream_info
+					+ scd_sampleCount) * (fAudioStatus.sample_size >> 3)
+					* fAudioStatus.channels;
 				D(bug("stream: work_size %d\n", work_size));
 				if (work_size > sound_buffer_size)
 					work_size = sound_buffer_size;
@@ -418,17 +421,24 @@ PlatformAudio::Stream(void *arg)
 					goto silence;
 
 				// Send data to DSP
-				if (work_size == sound_buffer_size && !little_endian)
-					write(audio_fd, Mac2HostAddr(ReadMacInt32(apple_stream_info + scd_buffer)), sound_buffer_size);
-				else {
+				if (work_size == sound_buffer_size && !little_endian) {
+					write(audio_fd, Mac2HostAddr(ReadMacInt32(apple_stream_info
+						+ scd_buffer)), sound_buffer_size);
+				} else {
 					// Last buffer or little-endian DSP
 					if (little_endian) {
-						int16 *p = (int16 *)Mac2HostAddr(ReadMacInt32(apple_stream_info + scd_buffer));
-						for (int i=0; i<work_size/2; i++)
+						int16 *p = (int16 *)Mac2HostAddr(
+							ReadMacInt32(apple_stream_info + scd_buffer));
+
+						for (int i = 0; i < work_size / 2; i++)
 							last_buffer[i] = ntohs(p[i]);
-					} else
-						Mac2Host_memcpy(last_buffer, ReadMacInt32(apple_stream_info + scd_buffer), work_size);
-					memset((uint8 *)last_buffer + work_size, silence_byte, sound_buffer_size - work_size);
+					} else {
+						Mac2Host_memcpy(last_buffer,
+							ReadMacInt32(apple_stream_info + scd_buffer),
+							work_size);
+					}
+					memset((uint8 *)last_buffer + work_size, silence_byte,
+						sound_buffer_size - work_size);
 					write(audio_fd, last_buffer, sound_buffer_size);
 				}
 				D(bug("stream: data written\n"));
@@ -437,8 +447,9 @@ PlatformAudio::Stream(void *arg)
 
 		} else {
 
-			// Audio not active, play silence
-silence:	write(audio_fd, silent_buffer, sound_buffer_size);
+silence:
+		// Audio not active, play silence
+		write(audio_fd, silent_buffer, sound_buffer_size);
 		}
 	}
 	delete[] silent_buffer;
@@ -450,7 +461,6 @@ silence:	write(audio_fd, silent_buffer, sound_buffer_size);
 /*
  *  MacOS audio interrupt, read next data block
  */
-
 void
 PlatformAudio::DeviceInterrupt(void)
 {
@@ -477,13 +487,21 @@ PlatformAudio::DeviceInterrupt(void)
  *  volume in the upper 16 bits and the right channel volume in the lower 16 bits;
  *  both volumes are 8.8 fixed point values with 0x0100 meaning "maximum volume"))
  */
-
-bool audio_get_main_mute(void)
+bool
+PlatformAudio::GetMainMute(void)
 {
 	return false;
 }
 
-uint32 audio_get_main_volume(void)
+
+void
+PlatformAudio::SetMainMute(bool mute)
+{
+}
+
+
+uint32
+PlatformAudio::GetMainVolume(void)
 {
 	if (mixer_fd >= 0) {
 		int vol;
@@ -496,12 +514,35 @@ uint32 audio_get_main_volume(void)
 	return 0x01000100;
 }
 
-bool audio_get_speaker_mute(void)
+
+void
+PlatformAudio::SetMainVolume(uint32 vol)
+{
+	if (mixer_fd >= 0) {
+		int left = vol >> 16;
+		int right = vol & 0xffff;
+		int p = ((left * 100 / 256) << 8) | (right * 100 / 256);
+		ioctl(mixer_fd, SOUND_MIXER_WRITE_PCM, &p);
+	}
+}
+
+
+bool
+PlatformAudio::GetSpeakerMute(void)
 {
 	return false;
 }
 
-uint32 audio_get_speaker_volume(void)
+
+void
+PlatformAudio::SetSpeakerMute(bool mute)
+{
+
+}
+
+
+uint32
+PlatformAudio::GetSpeakerVolume(void)
 {
 	if (mixer_fd >= 0) {
 		int vol;
@@ -514,25 +555,9 @@ uint32 audio_get_speaker_volume(void)
 	return 0x01000100;
 }
 
-void audio_set_main_mute(bool mute)
-{
-}
 
-void audio_set_main_volume(uint32 vol)
-{
-	if (mixer_fd >= 0) {
-		int left = vol >> 16;
-		int right = vol & 0xffff;
-		int p = ((left * 100 / 256) << 8) | (right * 100 / 256);
-		ioctl(mixer_fd, SOUND_MIXER_WRITE_PCM, &p);
-	}
-}
-
-void audio_set_speaker_mute(bool mute)
-{
-}
-
-void audio_set_speaker_volume(uint32 vol)
+void
+PlatformAudio::SetSpeakerVolume(uint32 vol)
 {
 	if (mixer_fd >= 0) {
 		int left = vol >> 16;
