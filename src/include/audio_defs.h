@@ -20,16 +20,17 @@
 #ifndef AUDIO_DEFS_H
 #define AUDIO_DEFS_H
 
+
 #include "macos_util.h"
 
 
 // Current audio status
 struct audio_status {
-    uint32 sample_rate;     // 16.16 fixed point
-    uint32 sample_size;     // 8 or 16
-    uint32 channels;        // 1 (mono) or 2 (stereo)
-    uint32 mixer;           // Mac address of Apple Mixer
-    int num_sources;        // Number of active sources
+	uint32 sample_rate;     // 16.16 fixed point
+	uint32 sample_size;     // 8 or 16
+	uint32 channels;        // 1 (mono) or 2 (stereo)
+	uint32 mixer;           // Mac address of Apple Mixer
+	int num_sources;        // Number of active sources
 };
 
 
@@ -43,6 +44,7 @@ enum {
 	siDeviceBusyErr = -227
 };
 
+
 // General component dispatch selector codes
 enum {
 	kComponentOpenSelect = -1,
@@ -51,6 +53,7 @@ enum {
 	kComponentVersionSelect = -4,
 	kComponentRegisterSelect = -5
 };
+
 
 // Sound component dispatch selector codes
 enum {
@@ -69,6 +72,7 @@ enum {
 	kSoundComponentPauseSourceSelect = kDelegatedSoundComponentSelectors + 7,
 	kSoundComponentPlaySourceBufferSelect = kDelegatedSoundComponentSelectors + 8
 };
+
 
 // Sound information selectors
 const uint32 siNumberChannels		= FOURCC('c','h','a','n');	// current number of channels
@@ -89,6 +93,7 @@ const uint32 siSpeakerVolume		= FOURCC('s','v','o','l');	// volume level of buil
 const uint32 siDeviceName			= FOURCC('n','a','m','e');
 const uint32 siDeviceIcon			= FOURCC('i','c','o','n');
 const uint32 siHardwareFormat		= FOURCC('h','w','f','m');
+
 
 enum {	// ComponentResource struct
 	componentType = 0,
@@ -114,6 +119,7 @@ enum {	// ComponentResource struct
 	componentPFPlatform = 68
 };
 
+
 // Component feature flags
 enum {
 	k8BitRawIn				= (1 << 0),
@@ -132,12 +138,14 @@ enum {
 	cmpWantsRegisterMessage	= (1L << 31)
 };
 
+
 enum {	// ComponentParameters struct
 	cp_flags = 0,		// call modifiers: sync/async, deferred, immed, etc
 	cp_paramSize = 1,	// size in bytes of actual parameters passed to this call
 	cp_what = 2,		// routine selector, negative for Component management calls
 	cp_params = 4		// actual parameters for the indicated routine
 };
+
 
 enum {	// SoundComponentData struct
 	scd_flags = 0,
@@ -151,9 +159,28 @@ enum {	// SoundComponentData struct
 	SIZEOF_scd = 28
 };
 
+
 enum {	// SoundInfoList struct
 	sil_count = 0,
 	sil_infoHandle = 2
 };
+
+
+// Audio component global data and 68k routines
+enum {
+	adatDelegateCall = 0,       // 68k code to call DelegateCall()
+	adatOpenMixer = 14,         // 68k code to call OpenMixerSoundComponent()
+	adatCloseMixer = 36,        // 68k code to call CloseMixerSoundComponent()
+	adatGetInfo = 54,           // 68k code to call GetInfo()
+	adatSetInfo = 78,           // 68k code to call SetInfo()
+	adatPlaySourceBuffer = 102, // 68k code to call PlaySourceBuffer()
+	adatGetSourceData = 126,    // 68k code to call GetSourceData()
+	adatStartSource = 146,      // 68k code to call StartSource()
+	adatData = 168,             // SoundComponentData struct
+	adatMixer = 196,            // Mac address of mixer, returned by adatOpenMixer
+	adatStreamInfo = 200,       // Mac address of stream info, returned by adatGetSourceData
+	SIZEOF_adat = 204
+};
+
 
 #endif

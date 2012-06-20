@@ -38,7 +38,6 @@
 #include "disk.h"
 #include "cdrom.h"
 #include "audio.h"
-#include "audio_defs.h"
 #include "serial.h"
 #include "macos_util.h"
 #include "thunks.h"

@@ -31,7 +31,6 @@
 #include "emul_op.h"
 #include "main.h"
 #include "audio.h"
-#include "audio_defs.h"
 
 #define DEBUG 0
 #include "debug.h"

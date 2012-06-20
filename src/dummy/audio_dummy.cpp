@@ -51,7 +51,7 @@ PlatformAudio::DeviceInit(void)
 		return;
 
 	// Audio not available
-	audio_open = false;
+	fAudioOpen = false;
 }
 
 

@@ -31,7 +31,6 @@
 #include "rom_patches.h"
 #include "main.h"
 #include "audio.h"
-#include "audio_defs.h"
 #include "thunks.h"
 
 #define DEBUG 0
