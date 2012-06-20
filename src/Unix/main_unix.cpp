@@ -1342,9 +1342,10 @@ static void nvram_watchdog(void)
 {
 	if (memcmp(last_xpram, XPRAM, XPRAM_SIZE)) {
 		memcpy(last_xpram, XPRAM, XPRAM_SIZE);
-		SaveXPRAM();
+		gMacPRAM->Save();
 	}
 }
+
 
 static void *nvram_func(void *arg)
 {

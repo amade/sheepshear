@@ -37,14 +37,14 @@ static char xpram_path[1024];
 /*
  *  Load XPRAM from settings file
  */
-
-void LoadXPRAM(const char *vmdir)
+void
+MacPRAM::Load()
 {
-	if (vmdir) {
+	if (fPRAMFile) {
 #if POWERPC_ROM
-		snprintf(xpram_path, sizeof(xpram_path), "%s/nvram", vmdir);
+		snprintf(xpram_path, sizeof(xpram_path), "%s/nvram", fPRAMFile);
 #else
-		snprintf(xpram_path, sizeof(xpram_path), "%s/xpram", vmdir);
+		snprintf(xpram_path, sizeof(xpram_path), "%s/xpram", fPRAMFile);
 #endif
 	} else {
 		// Construct XPRAM path
@@ -60,7 +60,7 @@ void LoadXPRAM(const char *vmdir)
 	// Load XPRAM from settings file
 	int fd;
 	if ((fd = open(xpram_path, O_RDONLY)) >= 0) {
-		read(fd, XPRAM, XPRAM_SIZE);
+		read(fd, fPRAM, XPRAM_SIZE);
 		close(fd);
 	}
 }
@@ -69,12 +69,12 @@ void LoadXPRAM(const char *vmdir)
 /*
  *  Save XPRAM to settings file
  */
-
-void SaveXPRAM(void)
+void
+MacPRAM::Save()
 {
 	int fd;
 	if ((fd = open(xpram_path, O_WRONLY | O_CREAT, 0666)) >= 0) {
-		write(fd, XPRAM, XPRAM_SIZE);
+		write(fd, fPRAM, XPRAM_SIZE);
 		close(fd);
 	}
 }
@@ -84,7 +84,8 @@ void SaveXPRAM(void)
  *  Delete PRAM file
  */
 
-void ZapPRAM(void)
+void
+MacPRAM::Zap()
 {
 	// Construct PRAM path
 	xpram_path[0] = 0;

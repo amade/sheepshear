@@ -31,9 +31,11 @@
 #include "user_strings.h"
 #include "version.h"
 #include "cdrom.h"
-#include "xpram.h"
+#include "main.h"
 #include "prefs.h"
 #include "prefs_editor.h"
+#include "xpram.h"
+
 
 #define DEBUG 0
 #include "debug.h"
@@ -397,11 +399,13 @@ static void mn_about(...)
 	gtk_widget_show(dialog);
 }
 
+
 // "Zap NVRAM" selected
 static void mn_zap_pram(...)
 {
-	ZapPRAM();
+	gMacPRAM->Zap();
 }
+
 
 // Menu item descriptions
 static GtkItemFactoryEntry menu_items[] = {
