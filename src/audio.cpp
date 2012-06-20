@@ -51,8 +51,8 @@ static int open_count = 0;			// Open/close nesting count
 MacAudio::MacAudio()
 {
 	fAudioOpen = false;
-
 	DeviceInit();
+
 	Open();
 }
 

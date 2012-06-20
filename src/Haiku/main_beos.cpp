@@ -1264,7 +1264,7 @@ status_t SheepShear::nvram_func(void *arg)
 		snooze(60*1000000);
 		if (memcmp(obj->last_xpram, XPRAM, XPRAM_SIZE)) {
 			memcpy(obj->last_xpram, XPRAM, XPRAM_SIZE);
-			SaveXPRAM();
+			gMacPRAM->Save();
 		}
 	}
 	return 0;

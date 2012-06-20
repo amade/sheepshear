@@ -700,7 +700,7 @@ void PrefsWindow::MessageReceived(BMessage *msg)
 			break;
 
 		case MSG_ZAP_PRAM:			// "Zap PRAM File" menu item selected
-			ZapPRAM();
+			gMacPRAM->Zap();
 			break;
 
 		case MSG_VOLUME_INVOKED: {	// Double-clicked on volume name, toggle read-only flag

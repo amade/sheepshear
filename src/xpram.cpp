@@ -1,7 +1,8 @@
 /*
  *  xpram.cpp - XPRAM handling
  *
- *  Basilisk II (C) 1997-2008 Christian Bauer
+ *  SheepShear, 2012 Alexander von Gluck IV
+ *  Rewritten from Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,36 +24,31 @@
  *    Inside Macintosh: Operating System Utilities, chapter 7 "Parameter RAM Utilities"
  */
 
+
 #include <string.h>
 
 #include "sysdeps.h"
 #include "xpram.h"
 
 
-// Extended parameter RAM
-uint8 XPRAM[XPRAM_SIZE];
-
-
-/*
- *  Initialize XPRAM
- */
-
-void XPRAMInit(const char *vmdir)
+MacPRAM::MacPRAM(const char *vmdir)
 {
-	// Clear XPRAM
-	memset(XPRAM, 0, XPRAM_SIZE);
+	// Clear PRAM space
+	memset(fPRAM, 0, XPRAM_SIZE);
 
-	// Load XPRAM from settings file
-	LoadXPRAM(vmdir);
+	if (vmdir != NULL)
+		strcpy(&fPRAMFile, vmdir);
+
+	Load();
 }
 
 
-/*
- *  Deinitialize XPRAM
- */
-
-void XPRAMExit(void)
+MacPRAM::~MacPRAM()
 {
-	// Save XPRAM to settings file
-	SaveXPRAM();
+	Save();
 }
+
+
+// Other methods in platform dependant xpram_*.cpp
+
+

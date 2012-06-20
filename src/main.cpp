@@ -69,6 +69,7 @@ static void sheepshaver_write_byte(uintptr adr, uint32 b)
 
 ADBInput* gADBInput;
 MacAudio* gMacAudio;
+MacPRAM* gMacPRAM;
 
 
 /*
@@ -78,7 +79,7 @@ MacAudio* gMacAudio;
 bool InitAll(const char *vmdir)
 {
 	// Load NVRAM
-	XPRAMInit(vmdir);
+	gMacPRAM = new MacPRAM(vmdir);
 
 	// Load XPRAM default values if signature not found
 	if (XPRAM[0x130c] != 0x4e || XPRAM[0x130d] != 0x75
@@ -282,8 +283,8 @@ void ExitAll(void)
 	mon_exit();
 #endif
 
-	// Save NVRAM
-	XPRAMExit();
+	// Save and Exit PRAM
+	delete gMacPRAM;
 
 	// Exit clipboard
 	ClipExit();

@@ -1,7 +1,8 @@
 /*
  *  xpram_beos.cpp - XPRAM handling, BeOS specific stuff
  *
- *  Basilisk II (C) 1997-2008 Christian Bauer
+ *  SheepShear, 2012 Alexander von Gluck IV
+ *  Rewritten from Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,10 +19,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 #include <StorageKit.h>
 #include <unistd.h>
 
 #include "sysdeps.h"
+#include "version.h"
 #include "xpram.h"
 
 
@@ -31,28 +34,37 @@
 
 // XPRAM file name and path
 #if POWERPC_ROM
-const char XPRAM_FILE_NAME[] = "SheepShear_NVRAM";
+const char XPRAM_FILE_NAME[] = "NVRAM_data";
 #else
-const char XPRAM_FILE_NAME[] = "BasiliskII_XPRAM";
+const char XPRAM_FILE_NAME[] = "XPRAM_data";
 #endif
-static BPath xpram_path;
+
+
+static status_t
+generate_path(BPath* pramFile)
+{
+	find_directory(B_USER_SETTINGS_DIRECTORY, pramFile, true);
+	pramFile->Append(PROGRAM_NAME);
+	pramFile->Append(XPRAM_FILE_NAME);
+}
 
 
 /*
  *  Load XPRAM from settings file
  */
-
-void LoadXPRAM(const char *vmdir)
+void
+MacPRAM::Load()
 {
-	D(bug("%s: %s\n", __func__, vmdir));
 	// Construct XPRAM path
-	find_directory(B_USER_SETTINGS_DIRECTORY, &xpram_path, true);
-	xpram_path.Append(XPRAM_FILE_NAME);
+	BPath pramFile;
+	generate_path(&pramFile);
+
+	D(bug("%s: %s\n", __func__, pramFile.Path()));
 
 	// Load XPRAM from settings file
 	int fd;
-	if ((fd = open(xpram_path.Path(), O_RDONLY)) >= 0) {
-		read(fd, XPRAM, XPRAM_SIZE);
+	if ((fd = open(pramFile.Path(), O_RDONLY)) >= 0) {
+		read(fd, fPRAM, XPRAM_SIZE);
 		close(fd);
 	}
 }
@@ -61,20 +73,21 @@ void LoadXPRAM(const char *vmdir)
 /*
  *  Save XPRAM to settings file
  */
-
-void SaveXPRAM(void)
+void
+MacPRAM::Save()
 {
-	if (xpram_path.InitCheck() != B_NO_ERROR) {
-		bug("%s: Failed to write PRAM to %s\n", __func__, xpram_path.Path());
-		return;
-	}
+	// Construct XPRAM path
+	BPath pramFile;
+	generate_path(&pramFile);
+
+	D(bug("%s: %s\n", __func__, pramFile.Path()));
 
 	int fd;
-	if ((fd = open(xpram_path.Path(), O_WRONLY | O_CREAT, 0666)) >= 0) {
-		write(fd, XPRAM, XPRAM_SIZE);
+	if ((fd = open(pramFile.Path(), O_WRONLY | O_CREAT, 0666)) >= 0) {
+		write(fd, fPRAM, XPRAM_SIZE);
 		close(fd);
 	} else
-		bug("%s: Failed to write PRAM to %s\n", __func__, xpram_path.Path());
+		bug("%s: Failed to write PRAM to %s\n", __func__, pramFile.Path());
 }
 
 
@@ -82,12 +95,15 @@ void SaveXPRAM(void)
  *  Delete PRAM file
  */
 
-void ZapPRAM(void)
+void
+MacPRAM::Zap(void)
 {
-	// Construct PRAM path
-	find_directory(B_USER_SETTINGS_DIRECTORY, &xpram_path, true);
-	xpram_path.Append(XPRAM_FILE_NAME);
+	// Construct XPRAM path
+	BPath pramFile;
+	generate_path(&pramFile);
+
+	D(bug("%s: %s\n", __func__, pramFile.Path()));
 
 	// Delete file
-	unlink(xpram_path.Path());
+	unlink(pramFile.Path());
 }

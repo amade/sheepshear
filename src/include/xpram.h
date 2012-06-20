@@ -30,15 +30,24 @@ const int XPRAM_SIZE = 8192;
 const int XPRAM_SIZE = 256;
 #endif
 
-extern uint8 XPRAM[XPRAM_SIZE];
 
-extern void XPRAMInit(const char *vmdir);
-extern void XPRAMExit(void);
+// Alias for PRAM data access
+#define XPRAM gMacPRAM->fPRAM
 
-// System specific and internal functions/data
-extern void LoadXPRAM(const char *vmdir);
-extern void SaveXPRAM(void);
-extern void ZapPRAM(void);
+
+class MacPRAM {
+public:
+							MacPRAM(const char*);
+							~MacPRAM();
+
+			void			Load();
+			void			Save();
+			void			Zap();
+
+			uint8			fPRAM[XPRAM_SIZE];
+private:
+			char			fPRAMFile;
+};
 
 
 #endif
