@@ -37,6 +37,15 @@ public:
 		void				Stream(void *arg, uint8 *stream, int stream_len);
 
 protected:
+		bool				GetMainMute();
+		void				SetMainMute(bool mute);
+		uint32				GetMainVolume();
+		void                SetMainVolume(uint32 vol);
+		bool                GetSpeakerMute();
+		void                SetSpeakerMute(bool mute);
+		uint32              GetSpeakerVolume();
+		void                SetSpeakerVolume(uint32 vol);
+
 		struct audio_status fAudioStatus;
 		bool				fAudioOpen;
 		int					fSampleRateIndex;

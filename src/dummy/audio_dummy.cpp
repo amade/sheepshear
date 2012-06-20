@@ -58,7 +58,6 @@ PlatformAudio::DeviceInit(void)
 /*
  *  Deinitialization
  */
-
 void
 PlatformAudio::DeviceShutdown(void)
 {
@@ -68,7 +67,6 @@ PlatformAudio::DeviceShutdown(void)
 /*
  *  First source added, start audio stream
  */
-
 void audio_enter_stream()
 {
 }
@@ -77,7 +75,6 @@ void audio_enter_stream()
 /*
  *  Last source removed, stop audio stream
  */
-
 void audio_exit_stream()
 {
 }
@@ -86,7 +83,6 @@ void audio_exit_stream()
 /*
  *  MacOS audio interrupt, read next data block
  */
-
 void
 PlatformAudio::DeviceInterrupt(void)
 {
@@ -95,62 +91,57 @@ PlatformAudio::DeviceInterrupt(void)
 
 
 /*
- *  Set sampling parameters
- *  "index" is an index into the audio_sample_rates[] etc. vectors
- *  It is guaranteed that AudioStatus.num_sources == 0
- */
-
-bool audio_set_sample_rate(int index)
-{
-}
-
-bool audio_set_sample_size(int index)
-{
-}
-
-bool audio_set_channels(int index)
-{
-}
-
-
-/*
  *  Get/set volume controls (volume values received/returned have the left channel
  *  volume in the upper 16 bits and the right channel volume in the lower 16 bits;
  *  both volumes are 8.8 fixed point values with 0x0100 meaning "maximum volume"))
  */
-
-bool audio_get_main_mute(void)
-{
-	return false;
-}
-
-uint32 audio_get_main_volume(void)
+uint32
+PlatformAudio::GetMainVolume(void)
 {
 	return 0x01000100;
 }
 
-bool audio_get_speaker_mute(void)
+
+void
+PlatformAudio::SetMainVolume(uint32 vol)
+{
+}
+
+
+bool
+PlatformAudio::GetMainMute(void)
 {
 	return false;
 }
 
-uint32 audio_get_speaker_volume(void)
+
+void
+PlatformAudio::SetMainMute(bool mute)
+{
+}
+
+
+bool
+PlatformAudio::GetSpeakerMute(void)
+{
+	return false;
+}
+
+
+void
+PlatformAudio::SetSpeakerMute(bool mute)
+{
+}
+
+
+uint32
+PlatformAudio::GetSpeakerVolume(void)
 {
 	return 0x01000100;
 }
 
-void audio_set_main_mute(bool mute)
-{
-}
 
-void audio_set_main_volume(uint32 vol)
-{
-}
-
-void audio_set_speaker_mute(bool mute)
-{
-}
-
-void audio_set_speaker_volume(uint32 vol)
+void
+PlatformAudio::SetSpeakerVolume(uint32 vol)
 {
 }

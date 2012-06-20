@@ -36,11 +36,20 @@ public:
 		bool				DeviceClose();
 
 protected:
+		bool				GetMainMute();
+		void				SetMainMute(bool mute);
+		uint32				GetMainVolume();
+		void				SetMainVolume(uint32 vol);
+		bool				GetSpeakerMute();
+		void				SetSpeakerMute(bool mute);
+		uint32				GetSpeakerVolume();
+		void				SetSpeakerVolume(uint32 vol);
+
 		struct audio_status	fAudioStatus;
 		bool				fAudioOpen;
-		int                 fSampleRateIndex;
-		int                 fSampleSizeIndex;
-		int                 fChannelCountIndex;
+		int					fSampleRateIndex;
+		int					fSampleSizeIndex;
+		int					fChannelCountIndex;
 };
 
 

@@ -195,49 +195,57 @@ PlatformAudio::DeviceInterrupt(void)
  *  volume in the lower 16 bits; both volumes are 8.8 fixed point
  *  values with 0x0100 meaning "maximum volume"))
  */
-bool audio_get_main_mute(void)
+bool
+PlatformAudio::GetMainMute(void)
 {
 	return main_mute;
 }
 
 
-uint32 audio_get_main_volume(void)
-{
-	return 0x01000100;
-}
-
-
-bool audio_get_speaker_mute(void)
-{
-	return speaker_mute;
-}
-
-
-uint32 audio_get_speaker_volume(void)
-{
-	return 0x01000100;
-}
-
-
-void audio_set_main_mute(bool mute)
+void
+PlatformAudio::SetMainMute(bool mute)
 {
 	main_mute = mute;
 }
 
 
-void audio_set_main_volume(uint32 vol)
+uint32
+PlatformAudio::GetMainVolume(void)
+{
+	return 0x01000100;
+}
+
+
+void
+PlatformAudio::SetMainVolume(uint32 vol)
 {
 
 }
 
 
-void audio_set_speaker_mute(bool mute)
+bool
+PlatformAudio::GetSpeakerMute(void)
+{
+	return speaker_mute;
+}
+
+
+void
+PlatformAudio::SetSpeakerMute(bool mute)
 {
 	speaker_mute = mute;
 }
 
 
-void audio_set_speaker_volume(uint32 vol)
+uint32
+PlatformAudio::GetSpeakerVolume(void)
+{
+	return 0x01000100;
+}
+
+
+void
+PlatformAudio::SetSpeakerVolume(uint32 vol)
 {
 
 }
