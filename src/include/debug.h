@@ -17,9 +17,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef DEBUG_H
 #define DEBUG_H
+
+
+#include "sysdeps.h"
+
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 
@@ -69,10 +72,16 @@ extern void kprintf(const char *, ...);
 
 #endif
 
+
+#if USE_DEBUG_MODE
+#undef DEBUG
+#define DEBUG 1
+#endif
+
 #if DEBUG
 #define D(x) (x);
 #else
-#define D(x) ;
+#define D(x);
 #endif
 
 #endif

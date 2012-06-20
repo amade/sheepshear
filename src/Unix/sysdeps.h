@@ -22,6 +22,10 @@
 #ifndef SYSDEPS_H
 #define SYSDEPS_H
 
+
+// Mass debugging, overrides DEBUG in each file
+#define USE_DEBUG_MODE 0
+
 #ifndef __STDC__
 #error "Your compiler is not ANSI. Get a real one."
 #endif

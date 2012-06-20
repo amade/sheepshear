@@ -37,6 +37,9 @@
 #include "user_strings_beos.h"
 
 
+// Mass debugging, overrides DEBUG in each file
+#define USE_DEBUG_MODE 0
+
 // Are we using a PPC emulator or the real thing?
 #ifdef __POWERPC__
 # define EMULATED_PPC 0

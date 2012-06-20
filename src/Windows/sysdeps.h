@@ -17,9 +17,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef SYSDEPS_H
 #define SYSDEPS_H
+
+
+// Mass debugging, overrides DEBUG in each file
+#define USE_DEBUG_MODE 0
 
 #ifndef __STDC__
 #error "Your compiler is not ANSI. Get a real one."
