@@ -115,7 +115,7 @@ public:
 	virtual void Draw(BRect update)
 	{
 		char str[256];
-		sprintf(str, GetString(STR_ABOUT_TEXT0), VERSION_MAJOR, VERSION_MINOR);
+		sprintf(str, GetString(STR_ABOUT_TEXT0), PROGRAM_VERSION_MAJOR, PROGRAM_VERSION_MINOR);
 
 		SetFont(be_bold_font);
 		SetDrawingMode(B_OP_OVER);

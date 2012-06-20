@@ -317,7 +317,7 @@ void AO_transmit_packet(uint32 mp_arg)
 			D(bug("WARNING: couldn't transmit packet (buffer full)\n"));
 			num_tx_buffer_full++;
 		} else {
-			D(bug(" write packet pos %d\n", i));
+			D(bug(" write packet\n"));
 			num_tx_packets++;
 
 			// Copy packet to buffer
@@ -386,7 +386,7 @@ void EtherIRQ(void)
 	while (p->cmd & IN_USE) {
 		if ((p->cmd >> 8) == SHEEP_PACKET) {
 			num_rx_packets++;
-			D(bug(" read packet pos %d\n", i));
+			D(bug(" read packet\n"));
 			uint32 size = p->length;
 
 #if MONITOR

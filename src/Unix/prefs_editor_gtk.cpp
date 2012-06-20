@@ -371,12 +371,12 @@ static void mn_about(...)
 
 	char str[512];
 	sprintf(str,
-		"SheepShear\nVersion %d.%d\n"
+		PROGRAM_NAME "\nVersion %d.%d\n"
 		"Copyright (C) 2012 Alexander von Gluck\n\n"
 		"SheepShear was forked from SheepShaver\n"
 		"Copyright (C) 1997-2008 Christian Bauer and Marc Hellwig\n\n"
 		"Distributed under the terms of the GPL license\n",
-		VERSION_MAJOR, VERSION_MINOR
+		PROGRAM_VERSION_MAJOR, PROGRAM_VERSION_MINOR
 	);
 
 	dialog = gtk_dialog_new();

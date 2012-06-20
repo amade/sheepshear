@@ -1,6 +1,7 @@
 /*
  *  version.h - Version information
  *
+ *  SheepShear, 2012 Alexander von Gluck IV
  *  SheepShaver (C) 1997-2008 Christian Bauer and Marc Hellwig
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -17,11 +18,13 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef VERSION_H
 #define VERSION_H
 
-const int VERSION_MAJOR = 2;
-const int VERSION_MINOR = 3;
+
+#define PROGRAM_NAME "SheepShear"
+#define PROGRAM_VERSION_MAJOR 0
+#define PROGRAM_VERSION_MINOR 3
+
 
 #endif

@@ -25,6 +25,10 @@
 #include "xpram.h"
 
 
+#define DEBUG 0
+#include "debug.h"
+
+
 // XPRAM file name and path
 #if POWERPC_ROM
 const char XPRAM_FILE_NAME[] = "SheepShear_NVRAM";
@@ -40,6 +44,7 @@ static BPath xpram_path;
 
 void LoadXPRAM(const char *vmdir)
 {
+	D(bug("%s: %s\n", __func__, vmdir));
 	// Construct XPRAM path
 	find_directory(B_USER_SETTINGS_DIRECTORY, &xpram_path, true);
 	xpram_path.Append(XPRAM_FILE_NAME);
@@ -59,13 +64,17 @@ void LoadXPRAM(const char *vmdir)
 
 void SaveXPRAM(void)
 {
-	if (xpram_path.InitCheck() != B_NO_ERROR)
+	if (xpram_path.InitCheck() != B_NO_ERROR) {
+		bug("%s: Failed to write PRAM to %s\n", __func__, xpram_path.Path());
 		return;
+	}
+
 	int fd;
 	if ((fd = open(xpram_path.Path(), O_WRONLY | O_CREAT, 0666)) >= 0) {
 		write(fd, XPRAM, XPRAM_SIZE);
 		close(fd);
-	}
+	} else
+		bug("%s: Failed to write PRAM to %s\n", __func__, xpram_path.Path());
 }
 
 

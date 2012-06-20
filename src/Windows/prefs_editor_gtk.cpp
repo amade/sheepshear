@@ -432,7 +432,7 @@ static void cb_about(...)
 		"you are welcome to redistribute it\n"
 		"under the terms of the GNU General\n"
 		"Public License.\n",
-		VERSION_MAJOR, VERSION_MINOR
+		PROGRAM_VERSION_MAJOR, PROGRAM_VERSION_MINOR
 	);
 
 	dialog = gtk_dialog_new();

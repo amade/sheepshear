@@ -17,9 +17,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef XPRAM_H
 #define XPRAM_H
+
+
+#include "sysdeps.h"
+
 
 #if POWERPC_ROM
 const int XPRAM_SIZE = 8192;
@@ -36,5 +39,6 @@ extern void XPRAMExit(void);
 extern void LoadXPRAM(const char *vmdir);
 extern void SaveXPRAM(void);
 extern void ZapPRAM(void);
+
 
 #endif
