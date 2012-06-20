@@ -87,11 +87,9 @@
 #include "debug.h"
 
 
-#include <app/Application.h>
-#include <app/Roster.h>
-#include <interface/Alert.h>
-#include <storage/Entry.h>
-#include <storage/File.h>
+#include <AppKit.h>
+#include <InterfaceKit.h>
+#include <StorageKit.h>
 
 
 // Enable Execute68k() safety checks?

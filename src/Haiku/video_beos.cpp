@@ -29,9 +29,8 @@
 #include "about_window.h"
 #include "version.h"
 
-#include <app/Application.h>
-#include <app/MessageFilter.h>
-#include <interface/Menu.h>
+#include <AppKit.h>
+#include <InterfaceKit.h>
 
 #define DEBUG 0
 #include "debug.h"

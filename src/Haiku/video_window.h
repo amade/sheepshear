@@ -23,17 +23,9 @@
 #include "adb.h"
 
 #include <DirectWindow.h>
-#include <app/Application.h>
-#include <app/Message.h>
-#include <app/MessageFilter.h>
-#include <app/MessageQueue.h>
-#include <game/WindowScreen.h>
-#include <interface/Bitmap.h>
-#include <interface/Menu.h>
-#include <interface/MenuBar.h>
-#include <interface/MenuItem.h>
-#include <interface/Screen.h>
-#include <interface/Window.h>
+#include <AppKit.h>
+#include <GameKit.h>
+#include <InterfaceKit.h>
 
 
 // Messages
