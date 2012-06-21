@@ -98,12 +98,12 @@ protected:
 	uint32 pc() const			{ return regs().pc; }
 	void increment_pc(int o)	{ pc() += o; }
 
-	friend class pc_operand;
-	friend class lr_operand;
-	friend class ctr_operand;
-	friend class cr_operand;
-	template< class field > friend class xer_operand;
-	template< class field > friend class fpscr_operand;
+	friend struct pc_operand;
+	friend struct lr_operand;
+	friend struct ctr_operand;
+	friend struct cr_operand;
+	template< class field > friend struct xer_operand;
+	template< class field > friend struct fpscr_operand;
 
 public:
 
