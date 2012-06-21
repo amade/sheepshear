@@ -70,9 +70,9 @@ static inline int dummy_thread_create(void) { errno = ENOSYS; return -1; }
 #undef  pthread_mutex_t
 #define pthread_mutex_t volatile int
 #undef  pthread_mutex_lock
-#define pthread_mutex_lock(m) -1
+#define pthread_mutex_lock(m) {}
 #undef  pthread_mutex_unlock
-#define pthread_mutex_unlock(m) -1
+#define pthread_mutex_unlock(m) {}
 #undef  PTHREAD_MUTEX_INITIALIZER
 #define PTHREAD_MUTEX_INITIALIZER 0
 #endif
@@ -126,7 +126,7 @@ int rpc_connection_busy(rpc_connection_t *connection)
 // Prepare socket path for addr.sun_path[]
 static int _rpc_socket_path(char **pathp, const char *ident)
 {
-  int i, len;
+  int len;
   len = strlen(ident);
 
   if (pathp == NULL)
@@ -144,7 +144,7 @@ static int _rpc_socket_path(char **pathp, const char *ident)
   if ((path = (char *)malloc(len + len_bias + 1)) == NULL)
 	return 0;
   strcpy(path, "/tmp/");
-  for (i = 0; i < len; i++) {
+  for (int i = 0; i < len; i++) {
     char ch = ident[i];
     if (ch == '/')
       ch = '_';
@@ -326,6 +326,7 @@ int rpc_wait_dispatch(rpc_connection_t *connection, int timeout)
 	return _rpc_wait_dispatch(connection, timeout);
 }
 
+#ifdef USE_THREADS
 // Process incoming messages in the background
 static void *rpc_server_func(void *arg)
 {
@@ -352,6 +353,7 @@ static void *rpc_server_func(void *arg)
   connection->server_thread_active = 0;
   return NULL;
 }
+#endif
 
 // Return listen socket of RPC connection
 int rpc_listen_socket(rpc_connection_t *connection)
