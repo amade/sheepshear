@@ -47,9 +47,10 @@ union any_register
  *		Basic CPU model
  **/
 
-struct basic_cpu
+class basic_cpu
 	: public task_plugin
 {
+public:
 	// Basic register set
 	struct registers
 	{

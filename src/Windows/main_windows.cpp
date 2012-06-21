@@ -172,10 +172,9 @@ int main(int argc, char **argv)
 	RAMBase = 0;
 
 	// Print some info
-	printf(GetString(STR_ABOUT_TEXT0),
+	printf("%s%d.%d\n", GetString(STR_ABOUT_TEXT0),
 		PROGRAM_VERSION_MAJOR, PROGRAM_VERSION_MINOR);
-	printf(GetString(STR_ABOUT_TEXT1));
-	printf(" %s\n", GetString(STR_ABOUT_TEXT2));
+	printf("%s %s\n", GetString(STR_ABOUT_TEXT1), GetString(STR_ABOUT_TEXT2));
 
 	// Read preferences
 	PrefsInit(NULL, argc, argv);

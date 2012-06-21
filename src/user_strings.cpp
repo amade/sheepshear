@@ -42,7 +42,7 @@
 
 // Common string definitions
 user_string_def common_strings[] = {
-	{STR_ABOUT_TEXT0, "SheepShear V%d.%d\n"},
+	{STR_ABOUT_TEXT0, "SheepShear V"},
 	{STR_ABOUT_TEXT1, "Forked from SheepShaver V2.3"},
 	{STR_ABOUT_TEXT2, "by Christian Bauer and Mar\"c\" Hellwig"},
 	{STR_READING_ROM_FILE, "Reading ROM file...\n"},
