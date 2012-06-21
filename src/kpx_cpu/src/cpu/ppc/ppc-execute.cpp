@@ -1638,7 +1638,6 @@ void powerpc_cpu::execute_vector_shift_octet(uint32 opcode)
 	typename VA::type const & vA = VA::const_ref(this, opcode);
 	typename VB::type const & vB = VB::const_ref(this, opcode);
 	typename VD::type & vD = VD::ref(this, opcode);
-	const int n_elements = 16 / VD::element_size;
 
 	const int sh = SH::get(this, opcode);
 	if (SD < 0) {
