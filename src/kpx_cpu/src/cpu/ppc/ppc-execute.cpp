@@ -89,6 +89,10 @@ static inline int ppc_to_native_rounding_mode(int round)
 	case 1: return FE_TOWARDZERO;
 	case 2: return FE_UPWARD;
 	case 3: return FE_DOWNWARD;
+	default:
+		fprintf(stderr, "ppc_to_native_rounding_mode: bad value (%d)\n", round);
+		fprintf(stderr, "assuming to nearest\n");
+		return FE_TONEAREST;
 	}
 }
 
@@ -99,6 +103,10 @@ static inline int native_to_ppc_rounding_mode(int round)
 	case FE_TOWARDZERO:	return 1;
 	case FE_UPWARD:		return 2;
 	case FE_DOWNWARD:	return 3;
+	default:
+		fprintf(stderr, "native_to_ppc_rounding_mode: bad value (%d)\n", round);
+		fprintf(stderr, "assuming to nearest\n");
+		return 0;
 	}
 }
 
