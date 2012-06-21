@@ -54,31 +54,6 @@
 
 
 /* ====================================================================== */
-/* === PThreads Glue                                                  === */
-/* ====================================================================== */
-
-//#define USE_THREADS
-
-#ifndef USE_THREADS
-#define pthread_t void *
-#define pthread_cancel(th)
-#define pthread_join(th, ret)
-#define pthread_testcancel()
-#define pthread_create(th, attr, start, arg) dummy_thread_create()
-static inline int dummy_thread_create(void) { errno = ENOSYS; return -1; }
-
-#undef  pthread_mutex_t
-#define pthread_mutex_t volatile int
-#undef  pthread_mutex_lock
-#define pthread_mutex_lock(m) {}
-#undef  pthread_mutex_unlock
-#define pthread_mutex_unlock(m) {}
-#undef  PTHREAD_MUTEX_INITIALIZER
-#define PTHREAD_MUTEX_INITIALIZER 0
-#endif
-
-
-/* ====================================================================== */
 /* === RPC Connection Handling                                        === */
 /* ====================================================================== */
 
@@ -325,36 +300,7 @@ int rpc_wait_dispatch(rpc_connection_t *connection, int timeout)
 
 	return _rpc_wait_dispatch(connection, timeout);
 }
-
-#ifdef USE_THREADS
-// Process incoming messages in the background
-static void *rpc_server_func(void *arg)
-{
-  rpc_connection_t *connection = (rpc_connection_t *)arg;
-
-  int ret = rpc_listen_socket(connection);
-  if (ret < 0)
-	return NULL;
-
-  connection->server_thread_active = 1;
-  for (;;) {
-	// XXX broken MacOS X doesn't implement cancellation points correctly
-	pthread_testcancel();
-
-	// wait for data to arrive
-	int ret = _rpc_wait_dispatch(connection, 50000);
-	if (ret == 0)
-	  continue;
-	if (ret < 0)
-	  break;
-
-	rpc_dispatch(connection);
-  }
-  connection->server_thread_active = 0;
-  return NULL;
-}
-#endif
-
+//
 // Return listen socket of RPC connection
 int rpc_listen_socket(rpc_connection_t *connection)
 {
@@ -387,22 +333,6 @@ int rpc_listen_socket(rpc_connection_t *connection)
   return connection->socket;
 }
 
-// Listen for incoming messages on RPC connection
-#ifdef USE_THREADS
-int rpc_listen(rpc_connection_t *connection)
-{
-  D(bug("rpc_listen\n"));
-
-  if (pthread_create(&connection->server_thread, NULL, rpc_server_func, connection) != 0) {
-	perror("server thread");
-	return RPC_ERROR_ERRNO_SET;
-  }
-
-  return RPC_ERROR_NO_ERROR;
-}
-#endif
-
-
 /* ====================================================================== */
 /* === Message Passing                                                === */
 /* ====================================================================== */
@@ -429,7 +359,6 @@ static struct {
   int last;
   int count;
 } g_message_descriptors = { NULL, 0, 0 };
-static pthread_mutex_t g_message_descriptors_lock = PTHREAD_MUTEX_INITIALIZER;
 
 // Add a user-defined marshaler
 static int rpc_message_add_callback(const rpc_message_descriptor_t *desc)
@@ -439,11 +368,9 @@ static int rpc_message_add_callback(const rpc_message_descriptor_t *desc)
   const int N_ENTRIES_ALLOC = 8;
   int error = RPC_ERROR_NO_ERROR;
 
-  pthread_mutex_lock(&g_message_descriptors_lock);
   if (g_message_descriptors.descs == NULL) {
 	g_message_descriptors.count = N_ENTRIES_ALLOC;
 	if ((g_message_descriptors.descs = (rpc_message_descriptor_t *)malloc(g_message_descriptors.count * sizeof(g_message_descriptors.descs[0]))) == NULL) {
-	  pthread_mutex_unlock(&g_message_descriptors_lock);
 	  return RPC_ERROR_NO_MEMORY;
 	}
 	g_message_descriptors.last = 0;
@@ -451,7 +378,6 @@ static int rpc_message_add_callback(const rpc_message_descriptor_t *desc)
   else if (g_message_descriptors.last >= g_message_descriptors.count) {
 	g_message_descriptors.count += N_ENTRIES_ALLOC;
 	if ((g_message_descriptors.descs = (rpc_message_descriptor_t *)realloc(g_message_descriptors.descs, g_message_descriptors.count * sizeof(g_message_descriptors.descs[0]))) == NULL) {
-	  pthread_mutex_unlock(&g_message_descriptors_lock);
 	  return RPC_ERROR_NO_MEMORY;
 	}
   }
@@ -460,13 +386,11 @@ static int rpc_message_add_callback(const rpc_message_descriptor_t *desc)
   int i;
   for (i = 0; i < g_message_descriptors.last; i++) {
 	if (g_message_descriptors.descs[i].id == desc->id) {
-	  pthread_mutex_unlock(&g_message_descriptors_lock);
 	  return RPC_ERROR_NO_ERROR;
 	}
   }
 
   g_message_descriptors.descs[g_message_descriptors.last++] = *desc;
-  pthread_mutex_unlock(&g_message_descriptors_lock);
   return error;
 }
 
